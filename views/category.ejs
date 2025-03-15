@@ -1,0 +1,82 @@
+<%- include('header') %>
+    <%- include('aside') %>
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!-- Content Header (Page header) -->
+            <section class="content-header">
+                <h1>
+                    <i class="fa fa-th"></i> <%- title %>
+                </h1>
+
+            </section>
+
+            <!-- Main content -->
+            <section class="content">
+                <!-- Default box -->
+                <div class="box">
+                    <div class="box-body">
+
+                        <form action="" method="POST" class="form-inline" role="form">
+
+                            <div class="form-group">
+                                <input type="email" class="form-control" id="" placeholder="Tìm kiếm">
+                            </div>
+
+
+
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i></button>
+                            <a href="/them-danh-muc" class="btn btn-success pull-right"><i class="fa fa-plus"> Thêm
+                                    mới</i></a>
+                        </form>
+                        <hr>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>id</th>
+                                    <th>Tên</th>
+                                    <th>Trạng thái</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                <% data.map(function(cat) { %>
+                                    <tr>
+                                        <td scope="row"><%=cat.id %></td>          
+                                        <td scope="row"><%= cat.name %></td>
+                                        <td scope="row"><%= cat.status == 0 ? 'Tạm ẩn' : 'Hiển thị' %></td>
+                                        <td class="text-right">
+                                            <a href="" class="btn btn-sm btn-primary"><i class="fa fa-edit"> Sửa</i>
+                                            </a>
+                                            <a href="/xoa-danh-muc/<%= cat.id %>" class="btn btn-sm btn-danger"><i class="fa fa-trash"> Xóa</i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                    <% }) %>
+
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- /.box-body -->
+
+                    <div class="box-footer">
+                        <ul class="pagination">
+                            <li><a href="#">&laquo;</a></li>
+
+                            <% for(i=1; i < totalpages; i++ ) { %>
+                                <li><a href="#"><%=i %></a></li>
+                            <% } %>
+
+                            <li><a href="#">&raquo;</a></li>
+                        </ul>
+                    </div>
+                    <!-- /.box-footer -->
+
+                </div>
+                <!-- /.box -->
+
+            </section>
+            <!-- /.content -->
+        </div>
+        <!-- /.content-wrapper -->
+        <%- include('footer') %>

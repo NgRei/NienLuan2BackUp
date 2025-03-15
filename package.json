@@ -1,0 +1,25 @@
+{
+  "name": "nienluan2",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NgRei/NienLuan2.git"
+  },
+  "keywords": [],
+  "author": "CaoTrongNguyen",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NgRei/NienLuan2/issues"
+  },
+  "homepage": "https://github.com/NgRei/NienLuan2#readme",
+  "description": "",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "mysql": "^2.18.1"
+  }
+}
