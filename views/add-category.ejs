@@ -16,38 +16,53 @@
                 <div class="box">
                     <div class="row">
                         <div class="col-md-4">
-                            
-                            <form action="" method="POST" role="form">                            
+
+                            <form action="" method="POST" role="form">
                                 <div class="box-body">
+                                    <% if (typeof error !== 'undefined' && error) { %>
+                                    <div class="alert alert-danger alert-dismissible">
+                                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                        <h4><i class="icon fa fa-ban"></i> Lỗi!</h4>
+                                        <%= error %>
+                                    </div>
+                                    <% } %>
                                     <div class="form-group">
                                         <label for="">Tên danh mục</label>
-                                        <input type="text" class="form-control" id="" placeholder="Input field">
+                                        <input type="text" class="form-control" id="" placeholder="Nhập tên danh mục"
+                                            name="name">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="">Mô tả danh mục</label>
+                                        <textarea class="form-control" id="" placeholder="Nhập mô tả danh mục"
+                                            name="mota" rows="8"></textarea>
                                     </div>
                                     <div class="form-group">
                                         <label for="">Trạng thái danh mục</label>
-                                        
+
                                         <div class="radio">
                                             <label>
-                                                <input type="radio" name="" id="input" value="" checked="checked">
+                                                <input type="radio" name="status" value="1" checked="checked">
                                                 Hiển thị
                                             </label>
                                         </div>
                                         <div class="radio">
                                             <label>
-                                                <input type="radio" name="" id="input" value="" checked="checked">
+                                                <input type="radio" name="status" value="0" checked="checked">
                                                 Tạm ẩn
                                             </label>
                                         </div>
                                     </div>
                                 </div>
-                                
+
                                 <div class="box-footer">
-                                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"> Lưu lại</i></button>
-                                    <a href="/danh-muc" class="btn btn-default pull-right"><i class="fa fa-arrow-left"> Quay lại</i></a>
+                                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"> Lưu
+                                            lại</i></button>
+                                    <a href="/danh-muc" class="btn btn-default pull-right"><i class="fa fa-arrow-left">
+                                            Quay lại</i></a>
                                 </div>
 
                             </form>
-                            
+
                         </div>
                     </div>
                 </div>

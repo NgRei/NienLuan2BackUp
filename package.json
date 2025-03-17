@@ -18,6 +18,7 @@
   "homepage": "https://github.com/NgRei/NienLuan2#readme",
   "description": "",
   "dependencies": {
+    "body-parser": "^1.20.3",
     "ejs": "^3.1.10",
     "express": "^4.21.2",
     "mysql": "^2.18.1"
