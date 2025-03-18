@@ -1,5 +1,5 @@
-<%- include('header') %>
-    <%- include('aside') %>
+<%- include('../header') %>
+    <%- include('../aside') %>
         <!-- Content Wrapper. Contains page content -->
         <div class="content-wrapper">
             <!-- Content Header (Page header) -->
@@ -47,7 +47,7 @@
                                         </div>
                                         <div class="radio">
                                             <label>
-                                                <input type="radio" name="status" value="0" checked="checked">
+                                                <input type="radio" name="status" value="0">
                                                 Tạm ẩn
                                             </label>
                                         </div>
@@ -55,10 +55,10 @@
                                 </div>
 
                                 <div class="box-footer">
-                                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"> Lưu
-                                            lại</i></button>
-                                    <a href="/danh-muc" class="btn btn-default pull-right"><i class="fa fa-arrow-left">
-                                            Quay lại</i></a>
+                                    <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Lưu
+                                            lại</button>
+                                    <a href="/danh-muc" class="btn btn-default pull-right"><i class="fa fa-arrow-left"></i>
+                                            Quay lại</a>
                                 </div>
 
                             </form>
@@ -72,4 +72,4 @@
             <!-- /.content -->
         </div>
         <!-- /.content-wrapper -->
-        <%- include('footer') %>
+        <%- include('../footer') %>
