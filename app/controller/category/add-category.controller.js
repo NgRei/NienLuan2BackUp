@@ -1,4 +1,4 @@
-const CategoryModel = require('../models/caterogy.model');
+const CategoryModel = require('../../models/category.model');
 
 class AddCategoryController {
     // Hiển thị form thêm danh mục
@@ -9,6 +9,7 @@ class AddCategoryController {
     // Xử lý thêm danh mục
     async create(req, res) {
         try {
+            
             await CategoryModel.create(req.body);
             res.redirect('/danh-muc');
         } catch (err) {

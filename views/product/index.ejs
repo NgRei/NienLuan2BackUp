@@ -1,0 +1,240 @@
+<%- include('../header') %>
+    <%- include('../aside') %>
+        <!-- Content Wrapper. Contains page content -->
+        <div class="content-wrapper">
+            <!-- Content Header (Page header) -->
+            <section class="content-header">
+                <h1>
+                    <i class="fa fa-th"></i> <b>Quản lý sản phẩm</b>
+                </h1>
+            </section>
+
+            <!-- Main content -->
+            <section class="content">
+                <!-- Default box -->
+                <div class="box">
+                    <div class="box-body">
+                        <% if (typeof error !=='undefined' && error) { %>
+                            <div class="alert alert-danger alert-dismissible">
+                                <button type="button" class="close" data-dismiss="alert"
+                                    aria-hidden="true">&times;</button>
+                                <h4><i class="icon fa fa-ban"></i> Lỗi!</h4>
+                                <%= error %>
+                            </div>
+                            <% } %>
+
+                                <% if (data.length===0 && _name) { %>
+                                    <div class="alert alert-warning alert-dismissible">
+                                        <button type="button" class="close" data-dismiss="alert"
+                                            aria-hidden="true">&times;</button>
+                                        <h4><i class="icon fa fa-warning"></i> Không tìm thấy!</h4>
+                                        Không tìm thấy sản phẩm nào phù hợp với từ khóa "<strong>
+                                            <%= _name %>
+                                        </strong>"
+                                    </div>
+                                    <% } %>
+
+                                        <!-- Gộp form tìm kiếm và form lọc thành một -->
+                                        <form action="/san-pham" method="GET" class="form-inline">
+                                            <div class="form-group">
+                                                <input class="form-control" name="name" placeholder="Tìm kiếm"
+                                                    value="<%= _name %>">
+                                            </div>
+                                            <button type="submit" class="btn btn-primary"><i
+                                                    class="fa fa-search"></i></button>
+                                            
+                                            <!-- Các trường lọc khác giữ nguyên -->
+                                            <div class="form-group">
+                                                <select class="form-control" name="category_id">
+                                                    <option value="">-- Danh mục --</option>
+                                                    <% categories.forEach(function(cat) { %>
+                                                        <option value="<%= cat.id %>" <%= (_category_id == cat.id) ? 'selected' : '' %>>
+                                                            <%= cat.name %>
+                                                        </option>
+                                                    <% }); %>
+                                                </select>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <select class="form-control" name="manufacturer">
+                                                    <option value="">-- Hãng sản xuất --</option>
+                                                    <option value="Bandai" <%= (_manufacturer == 'Bandai') ? 'selected' : '' %>>Bandai</option>
+                                                    <option value="Banpresto" <%= (_manufacturer == 'Banpresto') ? 'selected' : '' %>>Banpresto</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <select class="form-control" name="origin">
+                                                    <option value="">-- Nơi xuất xứ --</option>
+                                                    <option value="Việt Nam" <%= (_origin == 'Việt Nam') ? 'selected' : '' %>>Việt Nam</option>
+                                                    <option value="Nhật Bản" <%= (_origin == 'Nhật Bản') ? 'selected' : '' %>>Nhật Bản</option>
+                                                    <option value="Trung Quốc" <%= (_origin == 'Trung Quốc') ? 'selected' : '' %>>Trung Quốc</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <input type="number" class="form-control" placeholder="Năm sản xuất" name="year" value="<%= _year %>">
+                                            </div>
+                                            
+                                            <div class="form-group">
+                                                <select class="form-control" name="status">
+                                                    <option value="">-- Trạng thái --</option>
+                                                    <option value="1" <%= (_status == '1') ? 'selected' : '' %>>Hiển thị</option>
+                                                    <option value="0" <%= (_status == '0') ? 'selected' : '' %>>Tạm ẩn</option>
+                                                </select>
+                                            </div>
+                                            
+                                            <button type="submit" class="btn btn-primary"><i class="fa fa-filter"></i>Lọc</button>
+                                            <% if (_name || _category_id || _manufacturer || _origin || _year || _status) { %>
+                                                <a href="/san-pham" class="btn btn-default"><i
+                                                        class="fa fa-refresh"></i> Reset</a>
+                                            <% } %>
+                                            <a href="/them-san-pham" class="btn btn-success pull-right"><i
+                                                    class="fa fa-plus"></i> Thêm mới</a>
+                                        </form>
+
+                                        <% if (data.length> 0) { %>
+                                            <hr>
+                                            <table class="table table-hover" style="border-collapse: collapse;">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="border-right: 1px solid #ddd; text-align: center;">ID
+                                                        </th>
+                                                        <th style="border-right: 1px solid #ddd; text-align: center;">
+                                                            Tên</th>
+                                                        <th style="border-right: 1px solid #ddd; text-align: center;">
+                                                            Danh mục</th>
+                                                        <th style="border-right: 1px solid #ddd; text-align: center;">
+                                                            Giá</th>
+                                                        <th style="border-right: 1px solid #ddd; text-align: center;">Số
+                                                            lượng</th>
+                                                        <th style="border-right: 1px solid #ddd; text-align: center;">
+                                                            Hãng sản xuất</th>
+                                                        <th style="border-right: 1px solid #ddd; text-align: center;">
+                                                            Nơi xuất xứ</th>
+                                                        <th style="border-right: 1px solid #ddd; text-align: center;">
+                                                            Năm sản xuất</th>
+                                                        <th style="border-right: 1px solid #ddd; text-align: center;">
+                                                            Hình ảnh</th>
+                                                        <th style="border-right: 1px solid #ddd; text-align: center;">Mô
+                                                            tả</th>
+                                                        <th style="border-right: 1px solid #ddd; text-align: center;">
+                                                            Trạng thái</th>
+                                                        <th style="text-align: center;">Thao tác</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <% data.forEach(function(prodt) { %>
+                                                        <tr>
+                                                            <td
+                                                                style="border-right: 1px solid #ddd; text-align: center;">
+                                                                <%= prodt.id %>
+                                                            </td>
+                                                            <td style="border-right: 1px solid #ddd;">
+                                                                <%= prodt.name %>
+                                                            </td>
+                                                            <td style="border-right: 1px solid #ddd;">
+                                                                <%= prodt.category_name %>
+                                                            </td>
+                                                            <td style="border-right: 1px solid #ddd;">
+                                                                <%= prodt.gia %>
+                                                            </td>
+                                                            <td style="border-right: 1px solid #ddd;">
+                                                                <%= prodt.so_luong %>
+                                                            </td>
+                                                            <td style="border-right: 1px solid #ddd;">
+                                                                <%= prodt.hang_san_xuat %>
+                                                            </td>
+                                                            <td style="border-right: 1px solid #ddd;">
+                                                                <%= prodt.noi_xuat_xu %>
+                                                            </td>
+                                                            <td style="border-right: 1px solid #ddd;">
+                                                                <%= prodt.nam_san_xuat %>
+                                                            </td>
+                                                            <td
+                                                                style="border-right: 1px solid #ddd; text-align: center; vertical-align: middle;">
+                                                                <% if(prodt.hinh_anh) {%>
+                                                                    <img src="/uploads/<%= prodt.hinh_anh %>"
+                                                                        alt="Hình ảnh"
+                                                                        style="max-width: 100px; max-height: 100px;">
+
+                                                                    <% } else {%>
+                                                                        Không có hình ảnh
+                                                                        <% } %>
+                                                            </td>
+                                                            <td style="border-right: 1px solid #ddd;">
+                                                                <%= prodt.mota %>
+                                                            </td>
+                                                            <td
+                                                                style="border-right: 1px solid #ddd; text-align: center;">
+                                                                <span
+                                                                    class="label label-<%= prodt.status == 1 ? 'success' : 'warning' %>">
+                                                                    <%= prodt.status==1 ? 'Hiển thị' : 'Tạm ẩn' %>
+                                                                </span>
+                                                            </td>
+                                                            <td style="text-align: center;">
+                                                                <a href="/sua-san-pham/<%= prodt.id %>"
+                                                                    class="btn btn-sm btn-primary">
+                                                                    <i class="fa fa-edit"></i> Sửa
+                                                                </a>
+                                                                <a href="/xoa-san-pham/<%= prodt.id %>"
+                                                                    class="btn btn-sm btn-danger"
+                                                                    onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');">
+                                                                    <i class="fa fa-trash"></i> Xóa
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                        <% }) %>
+                                                </tbody>
+                                            </table>
+
+                                            <% if (totalpages > 1) { %>
+                                                <div class="box-footer clearfix text-center">
+                                                    <ul class="pagination pagination no-margin">
+                                                        <!-- Nút Previous -->
+                                                        <% if (currentPage > 1) { %>
+                                                            <li>
+                                                                <a href="/san-pham?page=<%= currentPage-1 %>&name=<%= _name %>&status=<%= _status %>&category_id=<%= _category_id %>&manufacturer=<%= _manufacturer %>&origin=<%= _origin %>&year=<%= _year %>">
+                                                                    &laquo;
+                                                                </a>
+                                                            </li>
+                                                        <% } else { %>
+                                                            <li class="disabled"><a href="javascript:void(0);">&laquo;</a></li>
+                                                        <% } %>
+                                                        
+                                                        <!-- Các số trang -->
+                                                        <% 
+                                                        let startPage = Math.max(1, currentPage - 2);
+                                                        let endPage = Math.min(totalpages, startPage + 4);
+                                                        if (endPage - startPage < 4) {
+                                                            startPage = Math.max(1, endPage - 4);
+                                                        }
+                                                        %>
+                                                        
+                                                        <% for (let i = startPage; i <= endPage; i++) { %>
+                                                            <li class="<%= currentPage == i ? 'active' : '' %>">
+                                                                <a href="/san-pham?page=<%= i %>&name=<%= _name %>&status=<%= _status %>&category_id=<%= _category_id %>&manufacturer=<%= _manufacturer %>&origin=<%= _origin %>&year=<%= _year %>">
+                                                                    <%= i %>
+                                                                </a>
+                                                            </li>
+                                                        <% } %>
+                                                        
+                                                        <!-- Nút Next -->
+                                                        <% if (currentPage < totalpages) { %>
+                                                            <li>
+                                                                <a href="/san-pham?page=<%= currentPage+1 %>&name=<%= _name %>&status=<%= _status %>&category_id=<%= _category_id %>&manufacturer=<%= _manufacturer %>&origin=<%= _origin %>&year=<%= _year %>">
+                                                                    &raquo;
+                                                                </a>
+                                                            </li>
+                                                        <% } else { %>
+                                                            <li class="disabled"><a href="javascript:void(0);">&raquo;</a></li>
+                                                        <% } %>
+                                                    </ul>
+                                                </div>
+                                            <% } %>
+                                                    <% } %>
+                    </div>
+                </div>
+            </section>
+        </div>
+        <%- include('../footer') %>

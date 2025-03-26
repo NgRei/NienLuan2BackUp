@@ -5,7 +5,7 @@
             <!-- Content Header (Page header) -->
             <section class="content-header">
                 <h1>
-                    <i class="fa fa-th"></i> <%- title %>
+                    <i class="fa fa-th"></i> <b>Quản lý danh mục</b>
                 </h1>
             </section>
 
@@ -14,102 +14,142 @@
                 <!-- Default box -->
                 <div class="box">
                     <div class="box-body">
-                        <% if (typeof error !== 'undefined' && error) { %>
-                        <div class="alert alert-danger alert-dismissible">
-                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                            <h4><i class="icon fa fa-ban"></i> Lỗi!</h4>
-                            <%= error %>
-                        </div>
-                        <% } %>
-
-                        <% if (data.length === 0 && _name) { %>
-                        <div class="alert alert-warning alert-dismissible">
-                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                            <h4><i class="icon fa fa-warning"></i> Không tìm thấy!</h4>
-                            Không tìm thấy danh mục nào phù hợp với từ khóa "<strong><%= _name %></strong>"
-                        </div>
-                        <% } %>
-
-                        <form action="" method="get" class="form-inline" role="form">
-                            <div class="form-group">
-                                <input class="form-control" name="name" placeholder="Tìm kiếm" value="<%= _name %>">
+                        <% if (typeof error !=='undefined' && error) { %>
+                            <div class="alert alert-danger alert-dismissible">
+                                <button type="button" class="close" data-dismiss="alert"
+                                    aria-hidden="true">&times;</button>
+                                <h4><i class="icon fa fa-ban"></i> Lỗi!</h4>
+                                <%= error %>
                             </div>
-
-                            <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i></button>
-                            <% if (_name) { %>
-                            <a href="/danh-muc" class="btn btn-default"><i class="fa fa-refresh"></i> Làm mới</a>
                             <% } %>
-                            <a href="/them-danh-muc" class="btn btn-success pull-right"><i class="fa fa-plus"></i> Thêm mới</a>
-                        </form>
-                        
-                        <% if (data.length > 0) { %>
-                        <hr>
-                        <table class="table table-hover" style="border-collapse: collapse;">
-                            <thead>
-                                <tr>
-                                    <th style="border-right: 1px solid #ddd; text-align: center;">ID</th>
-                                    <th style="border-right: 1px solid #ddd;">Tên</th>
-                                    <th style="border-right: 1px solid #ddd;">Mô tả</th>
-                                    <th style="border-right: 1px solid #ddd; text-align: center;">Trạng thái</th>
-                                    <th style="text-align: center;">Thao tác</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <% data.forEach(function(cat) { %>
-                                    <tr>
-                                        <td style="border-right: 1px solid #ddd; text-align: center;"><%=cat.id %></td>
-                                        <td style="border-right: 1px solid #ddd;"><%= cat.name %></td>
-                                        <td style="border-right: 1px solid #ddd;"><%= cat.mota %></td>
-                                        <td style="border-right: 1px solid #ddd; text-align: center;">
-                                            <span class="label label-<%= cat.status==1 ? 'success' : 'warning' %>">
-                                                <%= cat.status==1 ? 'Hiển thị' : 'Tạm ẩn' %>
-                                            </span>
-                                        </td>
-                                        <td style="text-align: center;">
-                                            <a href="/sua-danh-muc/<%= cat.id %>" class="btn btn-sm btn-primary">
-                                                <i class="fa fa-edit"></i> Sửa
-                                            </a>
-                                            <a href="/xoa-danh-muc/<%= cat.id %>" class="btn btn-sm btn-danger" onclick="return confirm('Bạn có chắc chắn muốn xóa danh mục này?');">
-                                                <i class="fa fa-trash"></i> Xóa
-                                            </a>
-                                        </td>
-                                    </tr>
-                                <% }) %>
-                            </tbody>
-                        </table>
-                        
-                        <% if (totalpages > 1) { %>
-                        <div class="box-footer text-center">
-                            <ul class="pagination">
-                                <li class="<%= _page <= 1 ? 'disabled' : '' %>">
-                                    <% if (_page <= 1) { %>
-                                        <span><i class="fa fa-angle-double-left"></i></span>
-                                    <% } else { %>
-                                        <a href="/danh-muc?page=<%= _page-1 %><%= _name ? '&name=' + _name : '' %>">
-                                            <i class="fa fa-angle-double-left"></i>
-                                        </a>
-                                    <% } %>
-                                </li>
 
-                                <% for(let i=1; i <= totalpages; i++) { %>
-                                    <li class="<%= _page == i ? 'active' : '' %>">
-                                        <a href="/danh-muc?page=<%=i%><%= _name ? '&name=' + _name : '' %>"><%=i %></a>
-                                    </li>
-                                <% } %>
-
-                                <li class="<%= _page >= totalpages ? 'disabled' : '' %>">
-                                    <% if (_page >= totalpages) { %>
-                                        <span><i class="fa fa-angle-double-right"></i></span>
-                                    <% } else { %>
-                                        <a href="/danh-muc?page=<%= _page+1 %><%= _name ? '&name=' + _name : '' %>">
-                                            <i class="fa fa-angle-double-right"></i>
-                                        </a>
+                                <% if (data.length===0 && _name) { %>
+                                    <div class="alert alert-warning alert-dismissible">
+                                        <button type="button" class="close" data-dismiss="alert"
+                                            aria-hidden="true">&times;</button>
+                                        <h4><i class="icon fa fa-warning"></i> Không tìm thấy!</h4>
+                                        Không tìm thấy danh mục nào phù hợp với từ khóa "<strong>
+                                            <%= _name %>
+                                        </strong>"
+                                    </div>
                                     <% } %>
-                                </li>
-                            </ul>
-                        </div>
-                        <% } %>
-                        <% } %>
+
+                                        <form action="" method="get" class="form-inline" role="form">
+                                            <div class="form-group">
+                                                <input class="form-control" name="name" placeholder="Tìm kiếm"
+                                                    value="<%= _name %>">
+                                            </div>
+                                            <button type="submit" class="btn btn-primary"><i
+                                                    class="fa fa-search"></i></button>
+                                            <% if (_name) { %>
+                                                <a href="/danh-muc" class="btn btn-default"><i
+                                                        class="fa fa-refresh"></i> Làm mới</a>
+                                                <% } %>
+                                                    <a href="/them-danh-muc" class="btn btn-success pull-right"><i
+                                                            class="fa fa-plus"></i> Thêm mới</a>
+                                        </form>
+
+                                        <form action="" method="get" class="form-inline" role="form">
+                                            <!-- Lọc theo trạng thái -->
+                                            <div class="form-group">
+                                                <select class="form-control" name="status">
+                                                    <option value="">-- Lọc theo trạng thái --</option>
+                                                    <option value="1" <%=_status=='1' ? 'selected' : '' %>>Hiển thị
+                                                    </option>
+                                                    <option value="0" <%=_status=='0' ? 'selected' : '' %>>Tạm ẩn
+                                                    </option>
+                                                </select>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary"><i class="fa fa-filter"></i>
+                                                Lọc</button>
+                                            <% if (_status) { %>
+                                                <a href="/danh-muc" class="btn btn-default"><i
+                                                        class="fa fa-refresh"></i> Làm mới</a>
+                                                <% } %>
+                                        </form>
+
+                                        <% if (data && data.length > 0) { %>
+                                            <hr>
+                                            <table class="table table-hover" style="border-collapse: collapse;">
+                                                <thead>
+                                                    <tr>
+                                                        <th style="border-right: 1px solid #ddd; text-align: center;">ID
+                                                        </th>
+                                                        <th style="border-right: 1px solid #ddd;">Tên</th>
+                                                        <th style="border-right: 1px solid #ddd;">Mô tả</th>
+                                                        <th style="border-right: 1px solid #ddd; text-align: center;">
+                                                            Trạng thái</th>
+                                                        <th style="text-align: center;">Thao tác</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <% data.forEach(function(category) { %>
+                                                        <tr>
+                                                            <td
+                                                                style="border-right: 1px solid #ddd; text-align: center;">
+                                                                <%=category.id %>
+                                                            </td>
+                                                            <td style="border-right: 1px solid #ddd;">
+                                                                <%= category.name %>
+                                                            </td>
+                                                            <td style="border-right: 1px solid #ddd;">
+                                                                <%= category.mota %>
+                                                            </td>
+                                                            <td
+                                                                style="border-right: 1px solid #ddd; text-align: center;">
+                                                                <span
+                                                                    class="label label-<%= category.status==1 ? 'success' : 'warning' %>">
+                                                                    <%= category.status==1 ? 'Hiển thị' : 'Tạm ẩn' %>
+                                                                </span>
+                                                            </td>
+                                                            <td style="text-align: center;">
+                                                                <a href="/danh-muc/chinh-sua/<%= category.id %>"
+                                                                    class="btn btn-sm btn-primary">
+                                                                    <i class="fa fa-edit"></i> Sửa
+                                                                </a>
+                                                                <a href="/xoa-danh-muc/<%= category.id %>"
+                                                                    class="btn btn-sm btn-danger"
+                                                                    onclick="return confirm('Bạn có chắc chắn muốn xóa danh mục này?');">
+                                                                    <i class="fa fa-trash"></i> Xóa
+                                                                </a>
+                                                            </td>
+                                                        </tr>
+                                                        <% }) %>
+                                                </tbody>
+                                            </table>
+
+                                            <% if (totalpages> 1) { %>
+                                                <div class="box-footer text-center">
+                                                    <ul class="pagination">
+                                                        <!-- Nút quay về trang trước -->
+                                                        <li class="<%= _page <= 1 ? 'disabled' : '' %>">
+                                                            <% if (_page <=1) { %>
+                                                                <span><i class="fa fa-angle-double-left"></i></span>
+                                                                <% } else { %>
+                                                                    <a href="/danh-muc?page=<%= _page-1 %><%= _name ? '&name=' + _name : '' %><%= _status ? '&status=' + _status : '' %>" <i class="fa fa-angle-double-left"></i></a>
+                                                                <% } %>
+                                                        </li>
+                                                        <!-- Các nút số trang -->
+                                                        <% for(let i=1; i <=totalpages; i++) { %>
+                                                            <li class="<%= _page == i ? 'active' : '' %>">
+                                                                <a href="/danh-muc?page=<%= i %><%= _name ? '&name=' + _name : '' %><%= _status ? '&status=' + _status : '' %>"><%= i %></a>
+                                                            </li>
+                                                        <% } %>
+                                                        <!-- Nút chuyển sang trang tiếp theo -->
+                                                        <li
+                                                            class="<%= _page >= totalpages ? 'disabled' : '' %>">
+                                                            <% if (_page>= totalpages) { %>
+                                                            <span><i class="fa fa-angle-double-right"></i></span>
+                                                            <% } else { %>
+                                                                <a href="/danh-muc?page=<%= _page+1 %><%= _name ? '&name=' + _name : '' %><%= _status ? '&status=' + _status : '' %>"> <i class="fa fa-angle-double-right"></i> </a>
+                                                            <% } %>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            <% } %>
+                                            <% } else { %>
+                                                <p>Không có danh mục nào.</p>
+                                            <% } %>
                     </div>
                 </div>
             </section>

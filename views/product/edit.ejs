@@ -1,0 +1,140 @@
+<%- include('../header') %>
+<%- include('../aside') %>
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+        <h1>
+            <i class="fa fa-edit"></i><b> Sửa sản phẩm</b>
+        </h1>
+    </section>
+
+    <!-- Main content -->
+    <section class="content">
+        <!-- Default box -->
+        <div class="box">
+            <div class="row">
+                <div class="col-md-8">
+                    <form action="/san-pham/chinh-sua/<%= product.id %>" method="POST" enctype="multipart/form-data">
+                        <div class="box-body">
+                            <% if (typeof error !== 'undefined' && error) { %>
+                                <div class="alert alert-danger alert-dismissible">
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                    <h4><i class="icon fa fa-ban"></i> Lỗi!</h4>
+                                    <%= error %>
+                                </div>
+                            <% } %>
+
+                            <div class="form-group">
+                                <label for="name">Tên sản phẩm</label>
+                                <input type="text" class="form-control" id="name" placeholder="Nhập tên sản phẩm" name="name" value="<%= product.name %>" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="category_id">Danh mục sản phẩm</label>
+                                <select class="form-control" id="category_id" name="category_id" required>
+                                    <option value="">-- Chọn danh mục --</option>
+                                    <% if (Array.isArray(categories)) { %>
+                                        <% categories.forEach(function(cat) { %>
+                                            <option value="<%= cat.id %>" <%= (product.category_id == cat.id) ? 'selected' : '' %>>
+                                                <%= cat.name %>
+                                            </option>
+                                        <% }); %>
+                                    <% } %>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="gia">Giá (VNĐ)</label>
+                                <input type="number" class="form-control" id="gia" placeholder="Nhập giá sản phẩm" name="gia" value="<%= product.gia %>" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="so_luong">Số lượng</label>
+                                <input type="number" class="form-control" id="so_luong" placeholder="Nhập số lượng sản phẩm" name="so_luong" value="<%= product.so_luong %>">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="hang_san_xuat">Hãng sản xuất</label>
+                                <select class="form-control" id="hang_san_xuat" name="hang_san_xuat" required>
+                                    <option value="">-- Chọn hãng sản xuất --</option>
+                                    <option value="Bandai" <%= product.hang_san_xuat === 'Bandai' ? 'selected' : '' %>>Bandai</option>
+                                    <option value="Banpresto" <%= product.hang_san_xuat === 'Banpresto' ? 'selected' : '' %>>Banpresto</option>
+                                </select>
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="noi_xuat_xu">Nơi xuất xứ</label>
+                                <select class="form-control" id="noi_xuat_xu" name="noi_xuat_xu" required>
+                                    <option value="">-- Chọn nơi xuất xứ --</option>
+                                    <option value="Việt Nam" <%= product.noi_xuat_xu === 'Việt Nam' ? 'selected' : '' %>>Việt Nam</option>
+                                    <option value="Nhật Bản" <%= product.noi_xuat_xu === 'Nhật Bản' ? 'selected' : '' %>>Nhật Bản</option>
+                                    <option value="Trung Quốc" <%= product.noi_xuat_xu === 'Trung Quốc' ? 'selected' : '' %>>Trung Quốc</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="nam_san_xuat">Năm sản xuất</label>
+                                <input type="number" class="form-control" id="nam_san_xuat" placeholder="Nhập năm sản xuất" name="nam_san_xuat" value="<%= product.nam_san_xuat %>">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="mota">Mô tả</label>
+                                <textarea class="form-control" id="mota" placeholder="Nhập mô tả sản phẩm" name="mota" rows="5"><%= product.mota %></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label>Trạng thái</label>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="status" value="1" <%= product.status == 1 ? 'checked' : '' %>> Hiển thị
+                                    </label>
+                                </div>
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="status" value="0" <%= product.status == 0 ? 'checked' : '' %>> Tạm ẩn
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="hinh_anh">Hình ảnh</label>
+                                <input type="file" class="form-control" id="hinh_anh" name="hinh_anh" accept="image/*">
+                                <% if (product.hinh_anh) { %>
+                                    <div id="image-preview" style="margin-top: 10px;">
+                                        <img id="preview-img" src="/uploads/<%= product.hinh_anh %>" alt="Hình ảnh hiện tại" style="max-width: 200px; max-height: 200px; border: 1px solid #ddd; padding: 5px;">
+                                    </div>
+                                <% } %>
+                            </div>
+                        </div>
+
+                        <div class="box-footer">
+                            <button type="submit" class="btn btn-primary"><i class="fa fa-save"></i> Lưu lại</button>
+                            <a href="/san-pham" class="btn btn-default pull-right"><i class="fa fa-arrow-left"></i> Quay lại</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- /.box -->
+    </section>
+    <!-- /.content -->
+</div>
+<script>
+    document.getElementById('hinh_anh').addEventListener('change', function (event) {
+        const file = event.target.files[0];
+        const previewImg = document.getElementById('preview-img');
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                previewImg.src = e.target.result;
+                previewImg.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        } else {
+            previewImg.src = '#';
+            previewImg.style.display = 'none';
+        }
+    });
+</script>
+<%- include('../footer') %>
