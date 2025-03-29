@@ -8,6 +8,10 @@ const app = express();
 const { ketnoi, testPool } = require('./connect-mySQL');
 const loginRouter = require('./app/router/login.router');
 const fs = require('fs');
+const sessionStorage = require('node-sessionstorage');
+
+// Thêm sessionStorage vào app.locals để sử dụng trong toàn bộ ứng dụng
+app.locals.sessionStorage = sessionStorage;
 
 // Kiểm tra kết nối database khi khởi động
 async function init() {
@@ -81,6 +85,12 @@ function configureApp() {
             maxAge: 24 * 60 * 60 * 1000 // 1 ngày
         }
     }));
+
+    // Middleware để sử dụng sessionStorage trong mỗi request
+    app.use((req, res, next) => {
+        req.sessionStorage = sessionStorage;
+        next();
+    });
 
     // Các middleware cơ bản
     app.use(bodyParser.urlencoded({ extended: true }));
@@ -173,7 +183,7 @@ function configureApp() {
     // Import middleware xác thực chỉ dùng cho user
     const checkAdmin = require('./app/middlewares/auth.middleware');
 
-    // Sử dụng route login và trang home
+    // Sử dụng route login và trang home không cần xác thực
     app.use('/', loginRouter);
 
     // Route trang chủ
@@ -185,6 +195,10 @@ function configureApp() {
         }
     });
 
+    // Áp dụng middleware xác thực cho tất cả các route bên dưới
+    app.use(checkAdmin);
+
+    // Các route cần xác thực
     app.get('/home', (req, res) => {
         res.render('home');
     });
@@ -196,6 +210,17 @@ function configureApp() {
     app.use('/them-san-pham', AddProductRoutes);
     app.use('/san-pham/chinh-sua', EditProductRoutes);
     app.use('/user', userRoutes);
+
+    // Thêm route debug này (chỉ nên dùng trong môi trường phát triển)
+    app.get('/debug-session', (req, res) => {
+        res.json({
+            expressSession: req.session || 'Không có dữ liệu',
+            nodeSessionStorage: {
+                admin: req.sessionStorage.getItem('admin') || 'Không có dữ liệu'
+            },
+            cookies: req.headers.cookie || 'Không có cookie'
+        });
+    });
 
     // Middleware xử lý lỗi 404
     app.use((req, res) => {

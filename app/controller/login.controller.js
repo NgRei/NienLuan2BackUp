@@ -33,7 +33,7 @@ class LoginController {
                 return res.status(403).render('login', { error: 'Tài khoản đã bị vô hiệu hóa' });
             }
             
-            // Lưu thông tin người dùng vào session
+            // Lưu thông tin người dùng vào express-session
             req.session.admin = {
                 id: user.id,
                 username: user.username,
@@ -41,15 +41,47 @@ class LoginController {
                 role: user.role
             };
             
+            // Lưu thông tin vào node-sessionstorage
+            req.sessionStorage.setItem('admin', {
+                id: user.id,
+                username: user.username,
+                email: user.email,
+                role: user.role,
+                loginTime: new Date().toISOString()
+            });
+            
             res.redirect('/');
         } catch (error) {
             console.error('Lỗi khi đăng nhập:', error);
             res.status(500).render('login', { error: 'Lỗi máy chủ, vui lòng thử lại sau' });
         }
     }   
+    
     static async logout(req, res) {
-        req.session.destroy();
-        res.redirect('/login');
+        try {
+            // Xóa session express
+            if (req.session) {
+                req.session.destroy((err) => {
+                    if (err) {
+                        console.error('Lỗi khi xóa session:', err);
+                    }
+                });
+            }
+            
+            // Xóa dữ liệu từ sessionStorage
+            if (req.sessionStorage) {
+                req.sessionStorage.removeItem('admin');
+            }
+            
+            // Xóa cookie phiên làm việc
+            res.clearCookie('connect.sid');
+            
+            console.log('Đã đăng xuất thành công');
+            res.redirect('/login');
+        } catch (error) {
+            console.error('Lỗi trong quá trình đăng xuất:', error);
+            res.redirect('/login');
+        }
     }
 }
 
