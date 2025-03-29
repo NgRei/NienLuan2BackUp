@@ -46,12 +46,14 @@
                                             <!-- Các trường lọc khác giữ nguyên -->
                                             <div class="form-group">
                                                 <select class="form-control" name="category_id">
-                                                    <option value="">-- Danh mục --</option>
-                                                    <% categories.forEach(function(cat) { %>
-                                                        <option value="<%= cat.id %>" <%= (_category_id == cat.id) ? 'selected' : '' %>>
-                                                            <%= cat.name %>
-                                                        </option>
-                                                    <% }); %>
+                                                    <option value="">-- Tất cả danh mục --</option>
+                                                    <% if (typeof categories !== 'undefined' && categories.length > 0) { %>
+                                                        <% categories.forEach(function(cat) { %>
+                                                            <option value="<%= cat.id %>">
+                                                                <%= cat.name %>
+                                                            </option>
+                                                        <% }); %>
+                                                    <% } %>
                                                 </select>
                                             </div>
                                             
@@ -173,11 +175,11 @@
                                                                 </span>
                                                             </td>
                                                             <td style="text-align: center;">
-                                                                <a href="/sua-san-pham/<%= prodt.id %>"
+                                                                <a href="/san-pham/chinh-sua/<%= prodt.id %>"
                                                                     class="btn btn-sm btn-primary">
                                                                     <i class="fa fa-edit"></i> Sửa
                                                                 </a>
-                                                                <a href="/xoa-san-pham/<%= prodt.id %>"
+                                                                <a href="/san-pham/xoa/<%= prodt.id %>"
                                                                     class="btn btn-sm btn-danger"
                                                                     onclick="return confirm('Bạn có chắc chắn muốn xóa sản phẩm này?');">
                                                                     <i class="fa fa-trash"></i> Xóa

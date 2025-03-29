@@ -1,0 +1,136 @@
+<%- include('../header') %>
+    <%- include('../aside') %>
+
+<div class="content-wrapper">
+    <section class="content-header">
+        <h1>
+            <i class="fa fa-user"></i> <b>Quản lý tài khoản</b>
+        </h1>
+    </section>
+    <section class="content">
+        <div class="box">
+            <div class="box-body">
+                <div class="container-fluid">
+                    <!-- Search and Filter -->
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <form class="form-inline" method="GET" action="/user">
+                                <div class="form-group mx-sm-3 mb-2">
+                                    <input type="text" class="form-control" name="search" placeholder="Tìm kiếm..." value="<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>">
+                                </div>
+                                <div class="form-group mx-sm-3 mb-2">
+                                    <select class="form-control" name="role">
+                                        <option value="">-- Vai trò --</option>
+                                        <option value="admin" <%= typeof role !== 'undefined' && role === 'admin' ? 'selected' : '' %>>Admin</option>
+                                        <option value="customer" <%= typeof role !== 'undefined' && role === 'customer' ? 'selected' : '' %>>Khách hàng</option>
+                                    </select>
+                                </div>
+                                <button type="submit" class="btn btn-primary mb-2"><i class="fa fa-search"></i></button>
+                                <% if ( searchTerm || role ) { %>
+                                    <a href="/user" class="btn btn-default"><i class="fa fa-refresh"></i> Reset</a>
+                                <% } %>
+                                <div class="card-header py-3 d-flex justify-content-between pull-right">
+                                    <a href="/user/add" class="btn btn-success"><i class="fa fa-plus"></i> Thêm tài khoản</a>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <hr>
+                    <!-- Users Table -->
+                    <div class="card shadow mb-4">
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr>
+                                            <th>ID</th>
+                                            <th>Tên tài khoản</th>
+                                            <th>Mật khẩu</th>
+                                            <th>Email</th>
+                                            <th>Họ tên</th>
+                                            <th>Số điện thoại</th>
+                                            <th>Vai trò</th>
+                                            <th>Thao tác</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% if (typeof users !== 'undefined' && users.length > 0) { %>
+                                            <% users.forEach(user => { %>
+                                            <tr>
+                                                <td><%= user.id %></td>
+                                                <td><%= user.username %></td>
+                                                <td><%= user.original_password %></td>
+                                                <td><%= user.email %></td>
+                                                <td><%= user.full_name %></td>
+                                                <td><%= user.phone %></td>
+                                                <td><%= user.role %></td>
+                                                <td>
+                                                    <a href="/user/edit/<%= user.id %>" class="btn btn-warning btn-sm">Sửa</a>
+                                                    <a href="/user/change-password/<%= user.id %>" class="btn btn-info btn-sm">Đổi mật khẩu</a>
+                                                    <a href="/user/delete/<%= user.id %>" class="btn btn-danger btn-sm" 
+                                                       onclick="return confirm('Bạn có chắc muốn xóa tài khoản này?')">Xóa</a>
+                                                </td>
+                                            </tr>
+                                            <% }); %>
+                                        <% } else { %>
+                                            <tr>
+                                                <td colspan="8" class="text-center">Không có dữ liệu</td>
+                                            </tr>
+                                        <% } %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Sau bảng users -->
+                    <% if (pagination.totalPages > 1) { %>
+                    <div class="box-footer clearfix text-center">
+                        <ul class="pagination pagination no-margin">
+                            <!-- Nút Previous -->
+                            <% if (pagination.currentPage > 1) { %>
+                                <li>
+                                    <a href="/user?page=<%= pagination.currentPage-1 %>&search=<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>&role=<%= typeof role !== 'undefined' ? role : '' %>">
+                                        &laquo;
+                                    </a>
+                                </li>
+                            <% } else { %>
+                                <li class="disabled"><a href="javascript:void(0);">&laquo;</a></li>
+                            <% } %>
+
+                            <!-- Các số trang -->
+                            <% 
+                            let startPage = Math.max(1, pagination.currentPage - 2);
+                            let endPage = Math.min(pagination.totalPages, startPage + 4);
+                            if (endPage - startPage < 4) {
+                                startPage = Math.max(1, endPage - 4);
+                            } 
+                            %>
+                             
+                            <% for (let i = startPage; i <= endPage; i++) { %>
+                                <li class="<%= pagination.currentPage == i ? 'active' : '' %>">
+                                    <a href="/user?page=<%= i %>&search=<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>&role=<%= typeof role !== 'undefined' ? role : '' %>">
+                                        <%= i %>
+                                    </a>
+                                </li>   
+                            <% } %>
+
+                            <!-- Nút Next -->   
+                            <% if (pagination.currentPage < pagination.totalPages) { %>
+                                <li>
+                                    <a href="/user?page=<%= pagination.currentPage+1 %>&search=<%= typeof searchTerm !== 'undefined' ? searchTerm : '' %>&role=<%= typeof role !== 'undefined' ? role : '' %>">
+                                        &raquo;
+                                    </a>
+                                </li>   
+                            <% } else { %>  
+                                <li class="disabled"><a href="javascript:void(0);">&raquo;</a></li>
+                            <% } %>
+                        </ul>
+                    </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+
+<%- include('../footer') %>

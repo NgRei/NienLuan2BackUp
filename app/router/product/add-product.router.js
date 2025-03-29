@@ -2,12 +2,12 @@ const express = require('express');
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
 const router = express.Router();
-const addProductController = require('../../controller/product/add-product.controller');
+const AddProductController = require('../../controller/product/add-product.controller');
 
 // Hiển thị form thêm sản phẩm
-router.get('/them-san-pham', addProductController.showForm);
+router.get('/', AddProductController.showForm);
 
 // Xử lý thêm sản phẩm
-router.post('/them-san-pham', upload.single('hinh_anh'), addProductController.create);
+router.post('/', upload.single('hinh_anh'), AddProductController.create);
 
 module.exports = router;

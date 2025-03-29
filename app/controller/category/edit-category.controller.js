@@ -1,10 +1,6 @@
 const CategoryModel = require('../../models/category.model');
 
-class EditCategoryController {
-
-    showForm(req, res) {
-        res.render('category/add');
-    }
+class editCategoryController {
 
     // Hiển thị trang chỉnh sửa danh mục
     async showFormEdit(req, res) {
@@ -30,4 +26,4 @@ class EditCategoryController {
         }
     }
 }
-module.exports = new EditCategoryController();
+module.exports = new editCategoryController();

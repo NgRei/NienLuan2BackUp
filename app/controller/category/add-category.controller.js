@@ -1,4 +1,5 @@
 const CategoryModel = require('../../models/category.model');
+const db = require('../../../connect-mySQL').ketnoi;
 
 class AddCategoryController {
     // Hiển thị form thêm danh mục
@@ -23,6 +24,7 @@ class AddCategoryController {
             });
         }
     }
+
 }
 
 module.exports = new AddCategoryController();

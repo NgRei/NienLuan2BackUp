@@ -1,12 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const productController = require('../../controller/product/product.controller');
+const ProductController = require('../../controller/product/product.controller');
 
-// Hiển thị danh sách danh mục
-router.get('/san-pham', productController.index);
+router.get('/', ProductController.index);
 
-// Xử lý xóa danh mục
-router.get('/xoa-san-pham/:id', productController.delete);
-
+router.get('/xoa/:id', ProductController.delete);
 
 module.exports = router;

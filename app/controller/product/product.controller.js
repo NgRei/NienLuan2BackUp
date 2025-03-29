@@ -22,7 +22,7 @@ class ProductController {
             );
             
             // Lấy danh sách danh mục để hiển thị trong form lọc
-            const categoryResult = await CategoryModel.getAll();
+            const categoryResult = await CategoryModel.getAllNoLimit();
             
             res.render('product/index', {
                 data: result.data,
@@ -36,7 +36,7 @@ class ProductController {
                 _manufacturer: manufacturer,
                 _origin: origin,
                 _year: year,
-                categories: categoryResult.data
+                categories: categoryResult
             });
         } catch (error) {
             console.error('Lỗi khi tải danh sách sản phẩm:', error);
@@ -74,6 +74,11 @@ class ProductController {
                 }
             }
             await ProductModel.delete(req.params.id);
+            await ketnoi.execute(
+                "UPDATE product SET id = id - 1 WHERE id > ?",
+                [product.id]
+            );
+            await ketnoi.execute("ALTER TABLE product AUTO_INCREMENT = 1");
             res.redirect('/san-pham'); // Chuyển hướng về danh sách sản phẩm nếu xóa thành công
         } catch (err) {
             if (err.errno === 1451) { // Lỗi ràng buộc khóa ngoại

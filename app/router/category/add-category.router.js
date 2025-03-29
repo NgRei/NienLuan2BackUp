@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const addCategoryController = require('../../controller/category/add-category.controller');
+const AddCategoryController = require('../../controller/category/add-category.controller');
 
 // Hiển thị form thêm danh mục
-router.get('/them-danh-muc', addCategoryController.showForm);
+router.get('/', AddCategoryController.showForm);
 
-// Xử lý thêm danh mục
-router.post('/them-danh-muc', addCategoryController.create);
+// Xử lý thêm danh mục - sử dụng instance method
+router.post('/', AddCategoryController.create);
 
 module.exports = router;

@@ -1,33 +1,30 @@
 const mysql = require('mysql2/promise');
 
-// Cấu hình kết nối với nhiều tùy chọn bền vững hơn
+// Cấu hình kết nối database
 const pool = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: '',
-    database: 'ql_shopmohinh', // Tên database của bạn
+    host: process.env.DB_HOST || 'localhost',
+    user: process.env.DB_USER || 'root',
+    password: process.env.DB_PASSWORD || '',
+    database: process.env.DB_NAME || 'ql_shopmohinh',
     waitForConnections: true,
     connectionLimit: 10,
-    maxIdle: 10, // Số kết nối tối đa ở trạng thái idle
-    idleTimeout: 60000, // Thời gian timeout cho idle connections (ms)
-    queueLimit: 0,
-    enableKeepAlive: true,
-    keepAliveInitialDelay: 0
+    queueLimit: 0
 });
 
-// Kiểm tra kết nối khi khởi tạo pool
-const testPool = async () => {
+// Hàm kiểm tra kết nối pool
+async function testPool() {
     try {
-        const conn = await pool.getConnection();
-        console.log('✅ Kết nối pool thành công');
-        conn.release();
+        const connection = await pool.getConnection();
+        console.log('Kết nối pool database thành công');
+        connection.release();
         return true;
-    } catch (err) {
-        console.error('❌ Lỗi kết nối pool:', err);
+    } catch (error) {
+        console.error('Lỗi kết nối pool database:', error);
         return false;
     }
-};
+}
 
+// Export pool dưới tên ketnoi và hàm testPool
 module.exports = {
     ketnoi: pool,
     testPool

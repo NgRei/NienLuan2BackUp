@@ -2,8 +2,12 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const multer = require('multer');
 const path = require('path');
+const session = require('express-session');
+const bcrypt = require('bcrypt');
 const app = express();
 const { ketnoi, testPool } = require('./connect-mySQL');
+const loginRouter = require('./app/router/login.router');
+const fs = require('fs');
 
 // Kiểm tra kết nối database khi khởi động
 async function init() {
@@ -67,11 +71,36 @@ async function checkTables() {
 
 // Cấu hình middleware và routes
 function configureApp() {
+    // Thêm cấu hình session trước các middleware khác
+    app.use(session({
+        secret: 'your-secret-key',
+        resave: false,
+        saveUninitialized: false,
+        cookie: { 
+            secure: process.env.NODE_ENV === 'production',
+            maxAge: 24 * 60 * 60 * 1000 // 1 ngày
+        }
+    }));
+
     // Các middleware cơ bản
     app.use(bodyParser.urlencoded({ extended: true }));
     app.set('view engine', 'ejs');
     app.use(express.static('public'));
     app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+    // Thêm đường dẫn cho static files
+    app.use('/plugins', express.static(path.join(__dirname, 'public/plugins')));
+    app.use('/css', express.static(path.join(__dirname, 'public/css')));
+    app.use('/js', express.static(path.join(__dirname, 'public/js')));
+    app.use('/dist', express.static(path.join(__dirname, 'public/dist')));
+    app.use('/bootstrap', express.static(path.join(__dirname, 'public/bootstrap')));
+    
+    // Bằng 1 dòng duy nhất tùy theo cách cài đặt của bạn:
+    // Nếu cài font-awesome qua npm:
+    app.use('/plugins/font-awesome', express.static(path.join(__dirname, 'node_modules/font-awesome')));
+
+    // HOẶC nếu đã copy thủ công vào thư mục public:
+    // app.use('/plugins/font-awesome', express.static(path.join(__dirname, 'public/plugins/font-awesome')));
 
     // Middleware database ping - kiểm tra kết nối trước mỗi request
     app.use(async (req, res, next) => {
@@ -126,37 +155,79 @@ function configureApp() {
     app.locals.upload = upload;
     module.exports.upload = upload;
 
-    // Import routes
-    const categoryRoutes = require('./app/router/category/category.router');
-    const addCategoryRoutes = require('./app/router/category/add-category.router');
-    const editCategoryRoutes = require('./app/router/category/edit-category.router');
-    const productRoutes = require('./app/router/product/product.router');
-    const addProductRoutes = require('./app/router/product/add-product.router');
-    const editProductRoutes = require('./app/router/product/edit-product.router');
+    // Sử dụng debug middleware
+    app.use((req, res, next) => {
+        console.log(`[DEBUG] Request: ${req.method} ${req.url}`);
+        next();
+    });
 
-    // Routes
-    app.get('/', function (req, res) {
+    // Import các router
+    const CategoryRoutes = require('./app/router/category/category.router');
+    const AddCategoryRoutes = require('./app/router/category/add-category.router');
+    const editCategoryRoutes = require('./app/router/category/edit-category.router');
+    const ProductRoutes = require('./app/router/product/product.router');
+    const AddProductRoutes = require('./app/router/product/add-product.router');
+    const EditProductRoutes = require('./app/router/product/edit-product.router');
+    const userRoutes = require('./app/router/user.router');
+    
+    // Import middleware xác thực chỉ dùng cho user
+    const checkAdmin = require('./app/middlewares/auth.middleware');
+
+    // Sử dụng route login và trang home
+    app.use('/', loginRouter);
+
+    // Route trang chủ
+    app.get('/', (req, res) => {
+        if (req.session.admin) {
+            res.redirect('/home');
+        } else {
+            res.redirect('/login');
+        }
+    });
+
+    app.get('/home', (req, res) => {
         res.render('home');
     });
 
-    // Sử dụng routes - đặt debug middleware trước mỗi route
-    app.use('/', (req, res, next) => {
-        console.log(`[DEBUG] Request: ${req.method} ${req.url}`);
-        next();
-    }, categoryRoutes);
-    app.use('/', addCategoryRoutes);
-    app.use('/', editCategoryRoutes);
-    app.use('/', productRoutes);
-    app.use('/', addProductRoutes);
-    app.use('/', editProductRoutes);
+    app.use('/danh-muc', CategoryRoutes);
+    app.use('/them-danh-muc', AddCategoryRoutes);
+    app.use('/danh-muc/chinh-sua', editCategoryRoutes);
+    app.use('/san-pham', ProductRoutes);
+    app.use('/them-san-pham', AddProductRoutes);
+    app.use('/san-pham/chinh-sua', EditProductRoutes);
+    app.use('/user', userRoutes);
 
     // Middleware xử lý lỗi 404
-    app.use((req, res, next) => {
-        console.log('404 Not Found: ', req.originalUrl);
-        res.status(404).render('error', {
-            message: 'Trang không tồn tại',
-            error: {status: 404}
-        });
+    app.use((req, res) => {
+        // Nếu bạn muốn sử dụng view khác đã tồn tại (ví dụ: error.ejs)
+        if (fs.existsSync(path.join(__dirname, 'views', 'error.ejs'))) {
+            return res.status(404).render('error', { 
+                title: 'Không tìm thấy trang',
+                message: 'Trang bạn đang tìm kiếm không tồn tại',
+                error: { status: 404 }
+            });
+        }
+        
+        // Hoặc trả về phản hồi HTML đơn giản
+        res.status(404).send(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+              <title>Trang không tồn tại</title>
+              <style>
+                body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+                h1 { color: #d9534f; }
+                a { color: #337ab7; text-decoration: none; }
+                a:hover { text-decoration: underline; }
+              </style>
+            </head>
+            <body>
+              <h1>Lỗi 404 - Trang không tồn tại</h1>
+              <p>Trang bạn đang tìm kiếm không tồn tại hoặc đã bị di chuyển.</p>
+              <p>Vui lòng kiểm tra lại đường dẫn hoặc <a href="/">quay về trang chủ</a>.</p>
+            </body>
+            </html>
+        `);
     });
 
     // Middleware xử lý lỗi
@@ -182,3 +253,5 @@ function startServer() {
 
 // Bắt đầu khởi tạo
 init();
+
+module.exports = app;

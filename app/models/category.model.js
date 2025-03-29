@@ -83,7 +83,7 @@ class CategoryModel {
 
     async showCategory() {
         try {
-            const [rows] = await ketnoi.query('SELECT * FROM category WHERE status = 1 ORDER BY id DESC');
+            const [rows] = await ketnoi.query('SELECT * FROM category ORDER BY id DESC');
             return rows;
         } catch (err) {
             console.error('Lỗi khi lấy danh mục:', err);
