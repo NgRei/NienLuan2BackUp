@@ -81,14 +81,13 @@ class OrderController {
             const result = await OrderModel.deleteOrder(req.params.id);
             
             if (!result.success) {
-                // Nếu không xóa được (không phải trạng thái cancelled)
                 return res.status(400).send(result.message);
             }
             
-            // Không cần cập nhật ID và AUTO_INCREMENT vì có thể gây ra vấn đề với khóa ngoại
-            // Đơn giản chỉ cần redirect sau khi xóa thành công
+            // Thông báo thành công và chuyển hướng
+            // Nếu bạn sử dụng flash messages:
+            // req.flash('success', result.message);
             
-            // Thông báo thành công (có thể thêm flash message nếu bạn sử dụng)
             res.redirect('/user/order');
         } catch (error) {
             console.error('Lỗi khi xóa đơn hàng:', error);

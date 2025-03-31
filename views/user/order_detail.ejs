@@ -23,9 +23,7 @@
                         </div>
                         <div class="box-footer">
                             <a href="/user/order" class="btn btn-default"><i class="fa-solid fa-arrow-left"></i> Quay lại danh sách đơn hàng</a>
-                            <a href="/user/order/<%= order.id %>/payment" class="btn btn-primary">Thông tin thanh toán</a>
-                            <a href="/user/order/<%= order.id %>/edit" class="btn btn-warning">Chỉnh sửa</a>
-                            
+                            <a href="/user/order/<%= order.id %>/payment" class="btn btn-primary">Thông tin thanh toán</a>                            
                             <% if (order.order_status === 'cancelled') { %>
                                 <a href="/user/order/<%= order.id %>/delete" class="btn btn-danger" onclick="return confirm('Bạn có chắc muốn xóa đơn hàng này?')">Xóa</a>
                             <% } %>

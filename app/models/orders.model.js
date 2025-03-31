@@ -53,10 +53,30 @@ class OrderModel {
             return { success: false, message: 'Chỉ được phép xóa đơn hàng đã bị hủy' };
         }
         
-        // Bước 2: Xóa đơn hàng
-        await ketnoi.query('DELETE FROM orders WHERE id = ?', [id]);
+        // Bước 2: Bắt đầu transaction để đảm bảo toàn vẹn dữ liệu
+        const connection = await ketnoi.getConnection();
+        await connection.beginTransaction();
         
-        return { success: true, id: id, message: 'Đơn hàng đã được xóa thành công' };
+        try {
+            // Bước 3: Xóa các mục trong order_items liên quan đến đơn hàng
+            await connection.query('DELETE FROM order_items WHERE order_id = ?', [id]);
+            
+            // Bước 4: Xóa đơn hàng
+            await connection.query('DELETE FROM orders WHERE id = ?', [id]);
+            
+            // Xác nhận transaction
+            await connection.commit();
+            
+            return { success: true, id: id, message: 'Đơn hàng đã được xóa thành công' };
+        } catch (error) {
+            // Nếu có lỗi, hoàn tác transaction
+            await connection.rollback();
+            console.error("Lỗi khi xóa đơn hàng:", error);
+            return { success: false, message: 'Đã xảy ra lỗi khi xóa đơn hàng' };
+        } finally {
+            // Trả connection về pool
+            connection.release();
+        }
     }
 
     static async calculateOrderTotal(orderId) {
