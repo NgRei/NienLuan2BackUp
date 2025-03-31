@@ -14,9 +14,6 @@ router.post('/edit/:id', UserController.update);
 router.get('/delete/:id', UserController.delete);
 
 router.get('/order', OrderController.index);
-
-// Route mới để xem tất cả đơn hàng của một user
-router.get('/user-orders/:id', OrderController.showUserOrders);
 router.get('/order/:id', OrderController.showOrderForm);
 router.get('/order/:id/delete', OrderController.deleteOrder);
 router.get('/order/:id/edit', OrderController.showEditOrderForm);

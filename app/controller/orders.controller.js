@@ -1,9 +1,19 @@
 const OrderModel = require('../models/orders.model');
 const UserModel = require('../models/user.model');
+const ProductModel = require('../models/product.model');
+
 class OrderController {
     static async index(req, res) {
-        const orders = await OrderModel.getAllOrders();
-        res.render('user/order', { orders, query: req.query });
+        const status = req.query.status || '';
+        const page = parseInt(req.query.page) || 1;
+        const limit = 5;
+        const result = await OrderModel.getAllOrders(page, limit, status);
+        res.render('user/order', { orders: result.data, status, query: req.query, pagination: {
+            total: result.total,
+            totalPages: result.totalPages,
+            currentPage: result.currentPage,
+            limit
+        }});
     }
     static async getOrderById(req, res) {
         const order = await OrderModel.getOrderById(req.params.id);
@@ -41,12 +51,22 @@ class OrderController {
                 return res.status(404).send('Không tìm thấy đơn hàng');
             }
             
+            let product = null;
+            if (order.product_id) {
+                try {
+                    product = await ProductModel.getProductById(order.product_id);
+                } catch (productError) {
+                    console.log("Lỗi khi lấy thông tin sản phẩm:", productError);
+                }
+            }
+            
             const user = await UserModel.findById(order.user_id);   
             const status = order.status == 1 ? 'Đã thanh toán' : 'Chưa thanh toán';
             
             res.render('user/order_detail', {
                 user,
                 order,
+                product,
                 order_date: order.order_date,
                 status,
                 notes: order.notes,
@@ -56,12 +76,27 @@ class OrderController {
             });
         } catch (error) {
             console.log(error);
-            res.redirect('/user');
+            res.redirect('/user/order');
         }
     }
     static async deleteOrder(req, res) {
-        const order = await OrderModel.deleteOrder(req.params.id);
-        res.redirect('/user/order');
+        try {
+            const result = await OrderModel.deleteOrder(req.params.id);
+            
+            if (!result.success) {
+                // Nếu không xóa được (không phải trạng thái cancelled)
+                return res.status(400).send(result.message);
+            }
+            
+            // Không cần cập nhật ID và AUTO_INCREMENT vì có thể gây ra vấn đề với khóa ngoại
+            // Đơn giản chỉ cần redirect sau khi xóa thành công
+            
+            // Thông báo thành công (có thể thêm flash message nếu bạn sử dụng)
+            res.redirect('/user/order');
+        } catch (error) {
+            console.error('Lỗi khi xóa đơn hàng:', error);
+            res.status(500).send('Đã xảy ra lỗi khi xóa đơn hàng');
+        }
     }
     static async showEditOrderForm(req, res) {
         const order = await OrderModel.getOrderById(req.params.id);

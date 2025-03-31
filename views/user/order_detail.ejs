@@ -16,6 +16,13 @@
                         </div>
                         <div class="box-body">
                             <p><strong>Ngày đặt:</strong> <%= order_date %></p>
+                            <p><strong>Sản phẩm:</strong> 
+                                <% if (product) { %>
+                                    <%= product.name %> (Mã: <%= order.product_id %>)
+                                <% } else { %>
+                                    Mã sản phẩm: <%= order.product_id %>
+                                <% } %>
+                            </p>
                             <p><strong>Tổng tiền:</strong> <%= total_amount %></p>
                             <p><strong>Trạng thái:</strong> <%= status %></p>
                             <p><strong>Địa chỉ giao hàng:</strong> <%= shipping_address %></p>
@@ -25,10 +32,28 @@
                             <a href="/user/order" class="btn btn-default"><i class="fa-solid fa-arrow-left"></i> Quay lại danh sách đơn hàng</a>
                             <a href="/user/order/<%= order.id %>/payment" class="btn btn-primary">Thông tin thanh toán</a>
                             <a href="/user/order/<%= order.id %>/edit" class="btn btn-warning">Chỉnh sửa</a>
-                            <a href="/user/order/<%= order.id %>/delete" class="btn btn-danger" onclick="return confirm('Bạn có chắc muốn xóa đơn hàng này?')">Xóa</a>
+                            
+                            <% if (order.order_status === 'cancelled') { %>
+                                <a href="/user/order/<%= order.id %>/delete" class="btn btn-danger" onclick="return confirm('Bạn có chắc muốn xóa đơn hàng này?')">Xóa</a>
+                            <% } %>
                         </div>
                     </div>
                 </div>
+                <% if (product) { %>
+                <div class="col-md-6">
+                    <div class="product-info">
+                        <h4>Thông tin sản phẩm</h4>
+                        <p><strong>Tên:</strong> <%= product.name %></p>
+                        <p><strong>Giá:</strong> <%= product.gia %> VND </p>
+                        <% if (product.mo_ta) { %>
+                            <p><strong>Mô tả:</strong> <%= product.mo_ta %></p>
+                        <% } %>
+                        <% if (product.hinh_anh) { %>
+                            <img src="/uploads/<%= product.hinh_anh %>" alt="<%= product.name %>" style="max-width: 200px; max-height: 200px;">
+                        <% } %>
+                    </div>
+                </div>
+                <% } %>
             </div>
         </section>
     </div>

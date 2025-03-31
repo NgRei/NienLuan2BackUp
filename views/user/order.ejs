@@ -24,9 +24,9 @@
                                         <option value="delivered" <%= (query && query.status == 'delivered') ? 'selected' : '' %>>Đã giao hàng</option>
                                         <option value="cancelled" <%= (query && query.status == 'cancelled') ? 'selected' : '' %>>Đã hủy</option>
                                     </select>
-                                    <button type="submit" class="btn btn-primary"><i class="fa fa-filter"></i></button>
+                                    <button type="submit" class="btn btn-primary"><i class="fa fa-sm fa-search"></i></button>
                                     <% if (query && query.status) { %>
-                                        <a href="/user/order" class="btn btn-default"><i class="fa fa-refresh"></i></a>
+                                        <a href="/user/order" class="btn btn-default"><i class="fa fa-sm fa-refresh"></i></a>
                                     <% } %>
                                 </div>
                             </form>
@@ -73,6 +73,51 @@
                             <% } else { %>
                                 <p>Bạn chưa có đơn hàng nào.</p>
                             <% } %>
+                            <!-- Sau bảng orders -->
+                    <% if (pagination.totalPages > 1) { %>
+                        <div class="box-footer clearfix text-center">
+                            <ul class="pagination pagination no-margin">
+                                <!-- Nút Previous -->
+                                <% if (pagination.currentPage > 1) { %>
+                                    <li>
+                                        <a href="/user/order?page=<%= pagination.currentPage-1 %>&status=<%= typeof status !== 'undefined' ? status : '' %>">
+                                            &laquo;
+                                        </a>
+                                    </li>
+                                <% } else { %>
+                                    <li class="disabled"><a href="javascript:void(0);">&laquo;</a></li>
+                                <% } %>
+    
+                                <!-- Các số trang -->
+                                <% 
+                                let startPage = Math.max(1, pagination.currentPage - 2);
+                                let endPage = Math.min(pagination.totalPages, startPage + 4);
+                                if (endPage - startPage < 4) {
+                                    startPage = Math.max(1, endPage - 4);
+                                } 
+                                %>
+                                 
+                                <% for (let i = startPage; i <= endPage; i++) { %>
+                                    <li class="<%= pagination.currentPage == i ? 'active' : '' %>">
+                                        <a href="/user/order?page=<%= i %>&status=<%= typeof status !== 'undefined' ? status : '' %>">
+                                            <%= i %>
+                                        </a>
+                                    </li>   
+                                <% } %>
+    
+                                <!-- Nút Next -->   
+                                <% if (pagination.currentPage < pagination.totalPages) { %>
+                                    <li>
+                                        <a href="/user/order?page=<%= pagination.currentPage+1 %>&status=<%= typeof status !== 'undefined' ? status : '' %>">
+                                            &raquo;
+                                        </a>
+                                    </li>   
+                                <% } else { %>  
+                                    <li class="disabled"><a href="javascript:void(0);">&raquo;</a></li>
+                                <% } %>
+                            </ul>
+                        </div>
+                        <% } %>
                             <div class="box-footer">
                             </div>
                         </div>

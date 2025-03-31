@@ -37,11 +37,11 @@
                                         <!-- Gộp form tìm kiếm và form lọc thành một -->
                                         <form action="/san-pham" method="GET" class="form-inline">
                                             <div class="form-group">
-                                                <input class="form-control" name="name" placeholder="Tìm kiếm"
+                                                <input class="form-control" name="name" placeholder="Tìm kiếm tên sản phẩm"
                                                     value="<%= _name %>">
                                             </div>
-                                            <button type="submit" class="btn btn-primary"><i
-                                                    class="fa fa-search"></i></button>
+                                            <!-- <button type="submit" class="btn btn-primary"><i
+                                                    class="fa fa-search"></i></button> -->
                                             
                                             <!-- Các trường lọc khác giữ nguyên -->
                                             <div class="form-group">
@@ -139,7 +139,7 @@
                                                                 <%= prodt.category_name %>
                                                             </td>
                                                             <td style="border-right: 1px solid #ddd;">
-                                                                <%= prodt.gia %>
+                                                                <%= prodt.gia %> VND
                                                             </td>
                                                             <td style="border-right: 1px solid #ddd;">
                                                                 <%= prodt.so_luong %>

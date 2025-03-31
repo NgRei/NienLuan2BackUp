@@ -242,6 +242,16 @@ class ProductModel {
             throw error;
         }
     }
+
+    async getProductById(id) {
+        try {
+            const [products] = await ketnoi.query('SELECT * FROM product WHERE id = ?', [id]);
+            return products[0];
+        } catch (error) {
+            console.error('Lỗi khi lấy thông tin sản phẩm:', error);
+            return null;
+        }
+    }
 }
 
 module.exports = new ProductModel();
