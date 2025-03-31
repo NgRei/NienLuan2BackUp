@@ -16,14 +16,7 @@
                         </div>
                         <div class="box-body">
                             <p><strong>Ngày đặt:</strong> <%= order_date %></p>
-                            <p><strong>Sản phẩm:</strong> 
-                                <% if (product) { %>
-                                    <%= product.name %> (Mã: <%= order.product_id %>)
-                                <% } else { %>
-                                    Mã sản phẩm: <%= order.product_id %>
-                                <% } %>
-                            </p>
-                            <p><strong>Tổng tiền:</strong> <%= total_amount %></p>
+                            <p><strong>Tổng tiền:</strong> <%= total_amount.toLocaleString('vi-VN') %> VND</p>
                             <p><strong>Trạng thái:</strong> <%= status %></p>
                             <p><strong>Địa chỉ giao hàng:</strong> <%= shipping_address %></p>
                             <p><strong>Ghi chú:</strong> <%= notes || 'Không có ghi chú' %></p>
@@ -39,22 +32,79 @@
                         </div>
                     </div>
                 </div>
-                <% if (product) { %>
                 <div class="col-md-6">
-                    <div class="product-info">
-                        <h4>Thông tin sản phẩm</h4>
-                        <p><strong>Tên:</strong> <%= product.name %></p>
-                        <p><strong>Giá:</strong> <%= product.gia %> VND </p>
-                        <% if (product.mo_ta) { %>
-                            <p><strong>Mô tả:</strong> <%= product.mo_ta %></p>
-                        <% } %>
-                        <% if (product.hinh_anh) { %>
-                            <img src="/uploads/<%= product.hinh_anh %>" alt="<%= product.name %>" style="max-width: 200px; max-height: 200px;">
-                        <% } %>
+                    <div class="box box-info">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">Danh sách sản phẩm</h3>
+                        </div>
+                        <div class="box-body">
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Tên sản phẩm</th>
+                                        <th>Số lượng</th>
+                                        <th>Đơn giá</th>
+                                        <th>Thành tiền</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <% if (orderItems && orderItems.length > 0) { %>
+                                        <% orderItems.forEach(item => { %>
+                                            <tr>
+                                                <td><%= item.name %></td>
+                                                <td><%= item.quantity %></td>
+                                                <td><%= item.price %> VND</td>
+                                                <td><%= (item.price * item.quantity) %> VND</td>
+                                            </tr>
+                                        <% }); %>
+                                    <% } else { %>
+                                        <tr>
+                                            <td colspan="4" class="text-center">Không có sản phẩm nào trong đơn hàng</td>
+                                        </tr>
+                                    <% } %>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th colspan="3" class="text-right">Tổng cộng:</th>
+                                        <th>
+                                            <% 
+                                            let tableTotal = total_amount;
+                                            if (orderItems && orderItems.length > 0) {
+                                                tableTotal = orderItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+                                            }
+                                            %>
+                                            <%= tableTotal.toLocaleString('vi-VN') %> VND
+                                        </th>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
                     </div>
                 </div>
-                <% } %>
             </div>
+            <% if (orderItems && orderItems.length > 0) { %>
+            <div class="row">
+                <% orderItems.forEach(item => { %>
+                <div class="col-md-6">
+                    <div class="box box-widget">
+                        <div class="box-header with-border">
+                            <h3 class="box-title"><%= item.name %></h3>
+                        </div>
+                        <div class="box-body">
+                            <p><strong>Số lượng:</strong> <%= item.quantity %></p>
+                            <p><strong>Đơn giá:</strong> <%= item.price %> VND</p>
+                            <% if (item.mo_ta) { %>
+                                <p><strong>Mô tả:</strong> <%= item.mo_ta %></p>
+                            <% } %>
+                            <% if (item.hinh_anh) { %>
+                                <img src="/uploads/<%= item.hinh_anh %>" alt="<%= item.name %>" style="max-width: 200px; max-height: 200px;">
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+                <% }); %>
+            </div>
+            <% } %>
         </section>
     </div>
 

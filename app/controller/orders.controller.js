@@ -51,14 +51,11 @@ class OrderController {
                 return res.status(404).send('Không tìm thấy đơn hàng');
             }
             
-            let product = null;
-            if (order.product_id) {
-                try {
-                    product = await ProductModel.getProductById(order.product_id);
-                } catch (productError) {
-                    console.log("Lỗi khi lấy thông tin sản phẩm:", productError);
-                }
-            }
+            // Lấy tất cả sản phẩm trong đơn hàng
+            const orderItems = await OrderModel.getOrderItems(order.id);
+            
+            // Tính và cập nhật tổng tiền
+            const calculatedTotal = await OrderModel.calculateOrderTotal(order.id);
             
             const user = await UserModel.findById(order.user_id);   
             const status = order.status == 1 ? 'Đã thanh toán' : 'Chưa thanh toán';
@@ -66,12 +63,12 @@ class OrderController {
             res.render('user/order_detail', {
                 user,
                 order,
-                product,
+                orderItems,
                 order_date: order.order_date,
                 status,
                 notes: order.notes,
                 shipping_address: order.shipping_address,
-                total_amount: order.total_amount,
+                total_amount: calculatedTotal || order.total_amount, // Sử dụng giá trị đã tính
                 query: req.query
             });
         } catch (error) {
@@ -106,6 +103,34 @@ class OrderController {
     static async updateOrder(req, res) {
         const order = await OrderModel.updateOrder(req.params.id, req.body);
         res.redirect('/user/order');
+    }
+    static async createOrder(req, res) {
+        try {
+            // Tạo đơn hàng mới
+            const orderData = {
+                user_id: req.session.user.id,
+                order_date: new Date(),
+                order_status: 'pending',
+                shipping_address: req.body.shipping_address,
+                notes: req.body.notes,
+                total_amount: 0 // Sẽ được cập nhật sau khi thêm sản phẩm
+            };
+            
+            const order = await OrderModel.createOrder(orderData);
+            
+            // Thêm sản phẩm vào đơn hàng
+            const productIds = Array.isArray(req.body.product_id) ? req.body.product_id : [req.body.product_id];
+            const quantities = Array.isArray(req.body.quantity) ? req.body.quantity : [req.body.quantity];
+            
+            for (let i = 0; i < productIds.length; i++) {
+                await OrderModel.addProductToOrder(order.id, productIds[i], quantities[i] || 1);
+            }
+            
+            res.redirect(`/user/order/${order.id}`);
+        } catch (error) {
+            console.log(error);
+            res.redirect('/user/order');
+        }
     }
 }
 

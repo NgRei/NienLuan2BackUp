@@ -58,6 +58,66 @@ class OrderModel {
         
         return { success: true, id: id, message: 'Đơn hàng đã được xóa thành công' };
     }
+
+    static async calculateOrderTotal(orderId) {
+        const [result] = await ketnoi.query(
+            `SELECT SUM(price * quantity) as total 
+             FROM order_items 
+             WHERE order_id = ?`,
+            [orderId]
+        );
+        
+        const total = result[0].total || 0;
+        
+        // Cập nhật tổng tiền trong bảng orders
+        await ketnoi.query(
+            'UPDATE orders SET total_amount = ? WHERE id = ?',
+            [total, orderId]
+        );
+        
+        return total;
+    }
+
+    static async addProductToOrder(orderId, productId, quantity = 1) {
+        // Lấy giá sản phẩm từ bảng product
+        const [products] = await ketnoi.query(
+            'SELECT gia FROM product WHERE id = ?',
+            [productId]
+        );
+        
+        if (products.length === 0) {
+            throw new Error('Không tìm thấy sản phẩm');
+        }
+        
+        const price = products[0].gia;
+        
+        // Thêm sản phẩm vào order_items
+        await ketnoi.query(
+            'INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (?, ?, ?, ?)',
+            [orderId, productId, quantity, price]
+        );
+        
+        // Cập nhật tổng tiền trong orders
+        const total = await this.calculateOrderTotal(orderId);
+        await ketnoi.query(
+            'UPDATE orders SET total_amount = ? WHERE id = ?',
+            [total, orderId]
+        );
+        
+        return { success: true };
+    }
+
+    static async getOrderItems(orderId) {
+        const [items] = await ketnoi.query(
+            `SELECT oi.*, p.name, p.mota, p.hinh_anh
+             FROM order_items oi
+             JOIN product p ON oi.product_id = p.id
+             WHERE oi.order_id = ?`,
+            [orderId]
+        );
+        
+        return items;
+    }
 }
 
 module.exports = OrderModel;
