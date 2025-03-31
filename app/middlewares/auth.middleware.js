@@ -23,10 +23,11 @@ const checkAdmin = (req, res, next) => {
             return res.redirect('/login');
         }
     }
+    
 
     // Nếu mọi thứ đều ổn, cho phép tiếp tục
     console.log('[AUTH] Xác thực thành công cho:', req.session.admin?.username || admin?.username);
     next();
 };
 
-module.exports = checkAdmin; 
+module.exports = checkAdmin;

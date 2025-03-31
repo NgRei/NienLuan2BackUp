@@ -30,6 +30,15 @@ class UserController {
             res.status(500).send('Lỗi server');
         }
     }
+    // static async display_username(req, res) {
+    //     try {
+    //         const username = req.params.username;
+    //         const user = await UserModel.findByUsername(username);
+    //         res.render('/', { user });
+    //     } catch (error) {
+    //         res.status(500).send('Lỗi server');
+    //     }    
+    // }
 
     // Hiển thị form thêm user
     static showAddForm(req, res) {
@@ -229,6 +238,32 @@ class UserController {
         } catch (error) {
             res.status(500).send('Lỗi khi cập nhật mật khẩu');
         }
+    }
+
+        // Hiển thị form thanh toán
+    static async showPaymentForm(req, res) {
+        try {
+            const user = await UserModel.findById(req.params.id);
+            if (!user) {
+                return res.status(404).send('User không tồn tại');
+            }
+            res.render('user/payment', { user });
+        } catch (error) {
+            res.status(500).send('Lỗi server');
+        }
+    }   
+
+    // Hiển thị form đơn hàng
+    static async showOrderForm(req, res) {
+        try {
+            const user = await UserModel.findById(req.params.id);
+            if (!user) {
+                return res.status(404).send('User không tồn tại');
+            }
+            res.render('user/order', { user });
+        } catch (error) {
+            res.status(500).send('Lỗi server');
+        }   
     }
 }
 

@@ -1,0 +1,85 @@
+<%- include('../header') %>
+    <%- include('../aside') %>
+
+    <div class="content-wrapper">
+        <section class="content-header">
+            <h1>Danh sách đơn hàng</h1>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+        </section>
+        
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box">
+                        <div class="box-header">
+                            <h3 class="box-title">Tất cả đơn hàng</h3>
+                            <form method="GET" action="" class="form-inline">
+                                <div class="form-group">
+                                    <select class="form-control" name="status">
+                                        <option value="">-- Trạng thái --</option>
+                                        <option value="pending" <%= (query && query.status == 'pending') ? 'selected' : '' %>>Đang chờ</option>
+                                        <option value="processing" <%= (query && query.status == 'processing') ? 'selected' : '' %>>Đang xử lý</option>
+                                        <option value="shipped" <%= (query && query.status == 'shipped') ? 'selected' : '' %>>Đang giao hàng</option>
+                                        <option value="delivered" <%= (query && query.status == 'delivered') ? 'selected' : '' %>>Đã giao hàng</option>
+                                        <option value="cancelled" <%= (query && query.status == 'cancelled') ? 'selected' : '' %>>Đã hủy</option>
+                                    </select>
+                                    <button type="submit" class="btn btn-primary"><i class="fa fa-filter"></i></button>
+                                    <% if (query && query.status) { %>
+                                        <a href="/user/order" class="btn btn-default"><i class="fa fa-refresh"></i></a>
+                                    <% } %>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="box-body">
+                            <% if(orders && orders.length > 0) { %>
+                                <table class="table table-bordered table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th class="text-center fixed-width">Mã đơn hàng</th>
+                                            <th class="text-center fixed-width">Ngày đặt</th>
+                                            <th class="text-center fixed-width">Tổng tiền</th>
+                                            <th class="text-center fixed-width">Trạng thái</th>
+                                            <th class="text-center fixed-width">Thao tác</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% orders.forEach(order => { %>
+                                            <tr>
+                                                <td class="text-center fixed-width"><%= order.id %></td>
+                                                <td class="text-center fixed-width"><%= order.order_date %></td>
+                                                <td class="text-center fixed-width"><%= order.total_amount %></td>
+                                                <td class="text-center fixed-width">
+                                                    <% if (order.order_status == 'pending') { %>
+                                                        <span class="badge badge-warning">Đang chờ</span>
+                                                    <% } else if (order.order_status == 'processing') { %>  
+                                                        <span class="badge badge-info">Đang xử lý</span>
+                                                    <% } else if (order.order_status == 'shipped') { %>
+                                                        <span class="badge badge-success">Đang giao hàng</span>
+                                                    <% } else if (order.order_status == 'delivered') { %>
+                                                        <span class="badge badge-success">Đã giao hàng</span>
+                                                    <% } else if (order.order_status == 'cancelled') { %>
+                                                        <span class="badge badge-danger">Đã hủy</span>
+                                                    <% } %>
+                                                </td>
+                                                <td class="text-center fixed-width">
+                                                    <a href="/user/order/<%= order.id %>" class="btn btn-info btn-sm">Chi tiết</a>
+                                                    <a href="/user/order/<%= order.id %>/payment" class="btn btn-primary btn-sm">Thanh toán</a>
+                                                </td>
+                                            </tr>
+                                        <% }); %>
+                                    </tbody>
+                                </table>
+                            <% } else { %>
+                                <p>Bạn chưa có đơn hàng nào.</p>
+                            <% } %>
+                            <div class="box-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+<%- include('../footer') %>

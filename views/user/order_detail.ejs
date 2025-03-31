@@ -1,0 +1,36 @@
+<%- include('../header') %>
+    <%- include('../aside') %>
+
+    <div class="content-wrapper">
+        <section class="content-header">
+            <h1><i class="fa-solid fa-circle-info"></i> Chi tiết đơn hàng #<%= order.id %></h1>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        </section>
+        
+        <section class="content">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">Thông tin đơn hàng</h3>
+                        </div>
+                        <div class="box-body">
+                            <p><strong>Ngày đặt:</strong> <%= order_date %></p>
+                            <p><strong>Tổng tiền:</strong> <%= total_amount %></p>
+                            <p><strong>Trạng thái:</strong> <%= status %></p>
+                            <p><strong>Địa chỉ giao hàng:</strong> <%= shipping_address %></p>
+                            <p><strong>Ghi chú:</strong> <%= notes || 'Không có ghi chú' %></p>
+                        </div>
+                        <div class="box-footer">
+                            <a href="/user/order" class="btn btn-default"><i class="fa-solid fa-arrow-left"></i> Quay lại danh sách đơn hàng</a>
+                            <a href="/user/order/<%= order.id %>/payment" class="btn btn-primary">Thông tin thanh toán</a>
+                            <a href="/user/order/<%= order.id %>/edit" class="btn btn-warning">Chỉnh sửa</a>
+                            <a href="/user/order/<%= order.id %>/delete" class="btn btn-danger" onclick="return confirm('Bạn có chắc muốn xóa đơn hàng này?')">Xóa</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+<%- include('../footer') %> 

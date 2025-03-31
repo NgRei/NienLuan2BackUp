@@ -1,0 +1,60 @@
+<%- include('../header') %>
+    <%- include('../aside') %>
+
+    <div class="content-wrapper">
+        <section class="content-header">
+            <h1>Thông tin thanh toán</h1>
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+        </section>
+
+        <section class="content">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="box box-primary">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">Thông tin đơn hàng : <%= orders.id %></h3>
+                        </div>
+                        <div class="box-body">
+                            <p>Ngày thanh toán: <%= payments.payment_date %></p>
+                        </div>
+                        <div class="box-body">
+                            <p>Hình thức thanh toán:
+                                <% if (payments.payment_method == 'bank_transfer') { %>
+                                    <span class="label label-primary"> <i class="fa-solid fa-building-columns"></i>Chuyển khoản</span>
+                                <% } else if (payments.payment_method == 'credit_card') { %>
+                                    <span class="label label-primary"> <i class="fa-solid fa-credit-card"></i>Thẻ tín dụng</span>
+                                <% } else if (payments.payment_method == 'cash') { %>
+                                    <span class="label label-success"> <i class="fa-solid fa-money-bill"></i>Tiền mặt</span>
+                                <% } else if (payments.payment_method == 'momo') { %>
+                                    <span class="label label-info"> <i class="fa-solid fa-mobile"></i>Momo</span>
+                                <% } else if (payments.payment_method == 'zalopay') { %>
+                                    <span class="label label-info"> <i class="fa-solid fa-mobile"></i>ZaloPay</span>
+                                <% } %>
+                            </p>
+                        </div>
+                        <div class="box-body">
+                            <p>Số tiền: <%= payments.payment_amount %></p>
+                        </div>
+                        <div class="box-body">
+                            <p>Trạng thái:
+                                <% if (payments.payment_status == 'pending') { %>
+                                    <span class="label label-warning">Đang chờ thanh toán</span>
+                                <% } else if (payments.payment_status == 'completed') { %>
+                                    <span class="label label-success">Đã thanh toán</span>
+                                <% } else if (payments.payment_status == 'failed') { %>
+                                    <span class="label label-danger">Giao dịch thất bại</span>
+                                <% } else if (payments.payment_status == 'refunded') { %>
+                                    <span class="label label-info">Hoàn trả</span>
+                                <% } %>
+                            </p>
+                        </div>
+                        <div class="box-footer">
+                            <a href="/user/order" class="btn btn-default pull-right">Quay lại</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+<%- include('../footer') %>

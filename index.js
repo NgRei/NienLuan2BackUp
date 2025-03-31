@@ -9,10 +9,10 @@ const { ketnoi, testPool } = require('./connect-mySQL');
 const loginRouter = require('./app/router/login.router');
 const fs = require('fs');
 const sessionStorage = require('node-sessionstorage');
+const { setAdminLocals } = require('./app/middlewares/admin.middleware');
 
 // Thêm sessionStorage vào app.locals để sử dụng trong toàn bộ ứng dụng
 app.locals.sessionStorage = sessionStorage;
-
 // Kiểm tra kết nối database khi khởi động
 async function init() {
     try {
@@ -91,6 +91,9 @@ function configureApp() {
         req.sessionStorage = sessionStorage;
         next();
     });
+    
+    // Middleware để đưa thông tin admin vào locals
+    app.use(setAdminLocals);
 
     // Các middleware cơ bản
     app.use(bodyParser.urlencoded({ extended: true }));
@@ -263,6 +266,8 @@ function configureApp() {
             error: err
         });
     });
+
+    
 }
 
 // Khởi động server
