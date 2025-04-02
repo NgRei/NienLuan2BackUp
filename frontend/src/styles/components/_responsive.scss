@@ -1,0 +1,73 @@
+// Mobile First Approach
+@mixin mobile {
+  @media (max-width: 576px) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (min-width: 577px) and (max-width: 992px) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: 993px) {
+    @content;
+  }
+}
+
+.homepage-container {
+  @include mobile {
+    padding: 10px;
+
+    .banner-section .banner {
+      height: 300px;
+      
+      h2 {
+        font-size: 2rem;
+      }
+      
+      p {
+        font-size: 1rem;
+      }
+    }
+
+    .products-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+    }
+
+    .categories-grid {
+      grid-template-columns: 1fr;
+      gap: 1rem;
+
+      .category-card {
+        height: 150px;
+      }
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      margin: 1.5rem 0;
+    }
+  }
+
+  @include tablet {
+    padding: 15px;
+
+    .products-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .banner-section .banner {
+      height: 350px;
+    }
+  }
+
+  @include desktop {
+    .products-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+}

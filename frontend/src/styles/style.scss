@@ -1,0 +1,16 @@
+
+@import 'components/header';
+@import 'components/homePage';
+@import 'components/responsive';
+
+// Styles chung
+.master-layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+}
