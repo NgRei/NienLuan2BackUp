@@ -12,28 +12,144 @@
 
   // Banner Section
   .banner-section {
-    margin-bottom: 3rem;
-    
-    .banner {
-      height: 400px;
-      background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5));
-      background-size: cover;
-      background-position: center;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      color: white;
-      text-align: center;
-      border-radius: 10px;
+    width: 100%;
+    height: 500px;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 40px;
 
-      h2 {
-        font-size: 3rem;
-        margin-bottom: 1rem;
+    .banner {
+      position: relative;
+      width: 100%;
+      height: 100%;
+
+      .banner-slide {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+
+        &.active {
+          opacity: 1;
+        }
+
+        .banner-content {
+          position: relative;
+          width: 100%;
+          height: 100%;
+
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+
+          .banner-info {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 40px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            color: white;
+
+            h2 {
+              font-size: 2.5rem;
+              margin-bottom: 15px;
+              text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            }
+
+            p {
+              font-size: 1.1rem;
+              margin-bottom: 20px;
+              max-width: 600px;
+            }
+
+            .explore-btn {
+              display: inline-block;
+              padding: 12px 30px;
+              background: #007bff;
+              color: white;
+              text-decoration: none;
+              border-radius: 25px;
+              transition: all 0.3s ease;
+              font-weight: 500;
+
+              &:hover {
+                background: #0056b3;
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+              }
+            }
+          }
+        }
       }
 
-      p {
-        font-size: 1.5rem;
+      .banner-nav {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 40px;
+        height: 40px;
+        background: rgba(255,255,255,0.3);
+        border: none;
+        border-radius: 50%;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        z-index: 10;
+
+        &:hover {
+          background: rgba(255,255,255,0.5);
+          transform: translateY(-50%) scale(1.1);
+        }
+
+        &.prev {
+          left: 20px;
+        }
+
+        &.next {
+          right: 20px;
+        }
+
+        i {
+          color: white;
+          font-size: 20px;
+        }
+      }
+
+      .banner-dots {
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+        z-index: 10;
+
+        .dot {
+          width: 12px;
+          height: 12px;
+          border: 2px solid white;
+          background: transparent;
+          border-radius: 50%;
+          cursor: pointer;
+          transition: all 0.3s ease;
+
+          &.active {
+            background: white;
+            transform: scale(1.2);
+          }
+
+          &:hover {
+            background: rgba(255,255,255,0.5);
+          }
+        }
       }
     }
   }
@@ -126,6 +242,46 @@
       h3 {
         font-size: 1.5rem;
         text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+      }
+    }
+  }
+}
+
+// Responsive styles
+@media (max-width: 768px) {
+  .banner-section {
+    height: 400px;
+
+    .banner .banner-slide .banner-info {
+      padding: 20px;
+
+      h2 {
+        font-size: 2rem;
+      }
+
+      p {
+        font-size: 1rem;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .banner-section {
+    height: 300px;
+
+    .banner .banner-slide .banner-info {
+      h2 {
+        font-size: 1.5rem;
+      }
+
+      p {
+        display: none;
+      }
+
+      .explore-btn {
+        padding: 8px 20px;
+        font-size: 14px;
       }
     }
   }

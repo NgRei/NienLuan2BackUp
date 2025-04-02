@@ -12,14 +12,14 @@ CREATE TABLE category (
 -- Create the product table
 CREATE TABLE product (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    ten_san_pham VARCHAR(255) NOT NULL,
+    name VARCHAR(255) NOT NULL,
     gia DECIMAL(10, 2) NOT NULL,
     category_id INT,
     noi_xuat_xu VARCHAR(255),
     hang_san_xuat VARCHAR(255),
     nam_san_xuat INT,
     so_luong INT,
-    mo_ta TEXT,
+    mota TEXT,
     hinh_anh VARCHAR(255),
     status TINYINT DEFAULT 1,
     FOREIGN KEY (category_id) REFERENCES category(id)

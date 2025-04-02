@@ -4,12 +4,16 @@ const multer = require('multer');
 const path = require('path');
 const session = require('express-session');
 const bcrypt = require('bcrypt');
+const cors = require('cors');
 const app = express();
 const { ketnoi, testPool } = require('./connect-mySQL');
 const loginRouter = require('./app/router/login.router');
 const fs = require('fs');
 const sessionStorage = require('node-sessionstorage');
 const { setAdminLocals } = require('./app/middlewares/admin.middleware');
+const categoriesRouter = require('./app/controller/category/category.js');
+const productRoutes = require('./app/controller/product/product');
+
 
 // Thêm sessionStorage vào app.locals để sử dụng trong toàn bộ ứng dụng
 app.locals.sessionStorage = sessionStorage;
@@ -17,9 +21,9 @@ app.locals.sessionStorage = sessionStorage;
 async function init() {
     try {
         // Kiểm tra kết nối pool
-        const poolOk = await testPool();
-        if (!poolOk) {
-            console.error('Không thể kết nối pool database. Dừng ứng dụng.');
+        const poolConnected = await testPool();
+        if (!poolConnected) {
+            console.error('❌ Không thể kết nối pool database. Dừng ứng dụng.');
             process.exit(1);
         }
 
@@ -75,6 +79,12 @@ async function checkTables() {
 
 // Cấu hình middleware và routes
 function configureApp() {
+    // Thêm CORS middleware ngay đầu tiên
+    app.use(cors({
+        origin: 'http://localhost:3000',
+        credentials: true
+    }));
+
     // Thêm cấu hình session trước các middleware khác
     app.use(session({
         secret: 'your-secret-key',
@@ -197,6 +207,10 @@ function configureApp() {
             res.redirect('/login');
         }
     });
+   
+    app.use(express.json());
+    app.use('/api', categoriesRouter);
+    app.use('/api', productRoutes);
 
     // Áp dụng middleware xác thực cho tất cả các route bên dưới
     app.use(checkAdmin);
@@ -223,6 +237,11 @@ function configureApp() {
             },
             cookies: req.headers.cookie || 'Không có cookie'
         });
+    });
+
+    // Kiểm tra route
+    app.get('/api/test', (req, res) => {
+        res.json({ message: 'API is working' });
     });
 
     // Middleware xử lý lỗi 404

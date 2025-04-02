@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import '../../styles/components/_header.scss'; 
-
+import { routers } from '../../utils/routers';
+import { categoryService } from '../../services/api';
 
 const Header = () => {
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [searchTerm, setSearchTerm] = useState('');
   const [showCategories, setShowCategories] = useState(false);
+  const [categories, setCategories] = useState([]);
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -32,19 +35,59 @@ const Header = () => {
     };
   }, [lastScrollY]);
 
+  useEffect(() => {
+    const loadCategories = async () => {
+      try {
+        const data = await categoryService.getAllCategories();
+        setCategories(data);
+      } catch (error) {
+        console.error('Error loading categories:', error);
+      }
+    };
+
+    loadCategories();
+  }, []);
+
+  // Thêm useEffect để xử lý click outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowCategories(false);
+      }
+    };
+
+    // Xử lý mouseout
+    const handleMouseLeave = (event) => {
+      // Kiểm tra xem chuột có thực sự rời khỏi toàn bộ dropdown không
+      const relatedTarget = event.relatedTarget;
+      if (dropdownRef.current && !dropdownRef.current.contains(relatedTarget)) {
+        // Thêm một chút delay để tránh đóng quá nhanh
+        setTimeout(() => {
+          setShowCategories(false);
+        }, 500);
+      }
+    };
+
+    // Thêm event listeners
+    document.addEventListener('mousedown', handleClickOutside);
+    dropdownRef.current?.addEventListener('mouseleave', handleMouseLeave);
+
+    // Cleanup
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      dropdownRef.current?.removeEventListener('mouseleave', handleMouseLeave);
+    };
+  }, []);
+
   const handleSearch = (e) => {
     e.preventDefault();
     // Xử lý tìm kiếm ở đây
     console.log('Searching for:', searchTerm);
   };
 
-  const categories = [
-    "Mô hình Anime",
-    "Mô hình Marvel",
-    "Mô hình DC",
-    "Mô hình Game",
-    "Phụ kiện"
-  ];
+  const toggleCategories = () => {
+    setShowCategories(!showCategories);
+  };
 
   return (
     <header className={`container ${isVisible ? 'header-visible' : 'header-hidden'}`}>
@@ -71,7 +114,7 @@ const Header = () => {
 
         <ul className="nav-links">
           <li>
-            <Link to="/login" className="icon-link">
+            <Link to={routers.USER.LOGIN} className="icon-link">
               <i className="fas fa-user"></i>
               <span className="icon-text">Đăng nhập</span>
             </Link>
@@ -87,25 +130,27 @@ const Header = () => {
 
       <nav className="sub-nav">
         <div className="left-menu">
-          <div 
-            className="category-dropdown"
-            onMouseEnter={() => setShowCategories(true)}
-            onMouseLeave={() => setShowCategories(false)}
-          >
-            <span className="dropdown-title">
+          <div className="category-dropdown" ref={dropdownRef}>
+            <button 
+              className="dropdown-title"
+              onClick={toggleCategories}
+            >
               <i className="fas fa-bars"></i> Danh mục
-            </span>
-            {showCategories && (
-              <ul className="dropdown-menu">
-                {categories.map((category, index) => (
-                  <li key={index}>
-                    <Link to={`/category/${category.toLowerCase()}`}>
-                      {category}
+            </button>
+            <div className={`dropdown-menu ${showCategories ? 'show' : ''}`}>
+              <ul>
+                {categories.map((category) => (
+                  <li key={category.id}>
+                    <Link 
+                      to={`/category/${category.id}`}
+                      onClick={() => setShowCategories(false)}
+                    >
+                      {category.name}
                     </Link>
                   </li>
                 ))}
               </ul>
-            )}
+            </div>
           </div>
 
           <div className="info-links">

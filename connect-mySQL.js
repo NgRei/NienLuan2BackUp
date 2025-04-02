@@ -2,30 +2,30 @@ const mysql = require('mysql2/promise');
 
 // Cấu hình kết nối database
 const pool = mysql.createPool({
-    host: process.env.DB_HOST || 'localhost',
-    user: process.env.DB_USER || 'root',
-    password: process.env.DB_PASSWORD || '',
-    database: process.env.DB_NAME || 'ql_shopmohinh',
+    host: 'localhost',
+    user: 'root',
+    password: '', // Thay đổi nếu có password khác
+    database: 'ql_shopmohinh',
     waitForConnections: true,
     connectionLimit: 10,
     queueLimit: 0
 });
 
 // Hàm kiểm tra kết nối pool
-async function testPool() {
+const testPool = async () => {
     try {
         const connection = await pool.getConnection();
-        console.log('Kết nối pool database thành công');
+        console.log('✅ Kết nối pool database thành công');
         connection.release();
         return true;
     } catch (error) {
-        console.error('Lỗi kết nối pool database:', error);
+        console.error('❌ Lỗi kết nối pool database:', error);
         return false;
     }
-}
+};
 
-// Export pool dưới tên ketnoi và hàm testPool
+// Export cả pool và hàm test
 module.exports = {
     ketnoi: pool,
-    testPool
+    testPool: testPool  // Đảm bảo export testPool như một function
 };
