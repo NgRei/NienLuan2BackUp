@@ -16,12 +16,14 @@
     height: 500px;
     position: relative;
     overflow: hidden;
-    margin-bottom: 40px;
+    margin-bottom: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 
     .banner {
-      position: relative;
       width: 100%;
       height: 100%;
+      position: relative;
 
       .banner-slide {
         position: absolute;
@@ -30,58 +32,62 @@
         width: 100%;
         height: 100%;
         opacity: 0;
-        transition: opacity 0.5s ease-in-out;
+        visibility: hidden;
+        transition: all 0.5s ease-in-out;
+        background: #f8f9fa;
 
         &.active {
           opacity: 1;
+          visibility: visible;
         }
 
         .banner-content {
-          position: relative;
-          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
           height: 100%;
+          padding: 2rem 4rem;
 
           img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            width: 45%;
+            height: auto;
+            object-fit: contain;
+            max-height: 400px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
           }
 
           .banner-info {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 40px;
-            background: linear-gradient(transparent, rgba(0,0,0,0.7));
-            color: white;
-
+            width: 45%;
+            padding: 2rem;
+            
             h2 {
               font-size: 2.5rem;
-              margin-bottom: 15px;
-              text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+              margin-bottom: 1rem;
+              color: #333;
+              font-weight: bold;
             }
 
             p {
               font-size: 1.1rem;
-              margin-bottom: 20px;
-              max-width: 600px;
+              margin-bottom: 2rem;
+              color: #666;
+              line-height: 1.6;
             }
 
             .explore-btn {
               display: inline-block;
-              padding: 12px 30px;
-              background: #007bff;
+              padding: 1rem 2rem;
+              background-color: #007bff;
               color: white;
               text-decoration: none;
-              border-radius: 25px;
-              transition: all 0.3s ease;
+              border-radius: 5px;
               font-weight: 500;
+              transition: all 0.3s ease;
 
               &:hover {
-                background: #0056b3;
+                background-color: #0056b3;
                 transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(0,0,0,0.3);
               }
             }
           }
@@ -94,20 +100,16 @@
         transform: translateY(-50%);
         width: 40px;
         height: 40px;
-        background: rgba(255,255,255,0.3);
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
         border: none;
         border-radius: 50%;
         cursor: pointer;
+        z-index: 2;
         display: flex;
         align-items: center;
         justify-content: center;
         transition: all 0.3s ease;
-        z-index: 10;
-
-        &:hover {
-          background: rgba(255,255,255,0.5);
-          transform: translateY(-50%) scale(1.1);
-        }
 
         &.prev {
           left: 20px;
@@ -117,9 +119,13 @@
           right: 20px;
         }
 
+        &:hover {
+          background: rgba(0, 0, 0, 0.7);
+          transform: translateY(-50%) scale(1.1);
+        }
+
         i {
-          color: white;
-          font-size: 20px;
+          font-size: 1.2rem;
         }
       }
 
@@ -130,24 +136,27 @@
         transform: translateX(-50%);
         display: flex;
         gap: 10px;
-        z-index: 10;
+        z-index: 2;
 
         .dot {
           width: 12px;
           height: 12px;
-          border: 2px solid white;
-          background: transparent;
           border-radius: 50%;
+          background: rgba(255, 255, 255, 0.5);
+          border: 2px solid rgba(0, 0, 0, 0.3);
           cursor: pointer;
+          padding: 0;
+          margin: 0;
           transition: all 0.3s ease;
 
           &.active {
             background: white;
+            border-color: #007bff;
             transform: scale(1.2);
           }
 
           &:hover {
-            background: rgba(255,255,255,0.5);
+            background: rgba(255, 255, 255, 0.8);
           }
         }
       }
@@ -249,18 +258,42 @@
 
 // Responsive styles
 @media (max-width: 768px) {
-  .banner-section {
-    height: 400px;
+  .homepage-container {
+    .banner-section {
+      height: auto;
+      min-height: 400px;
 
-    .banner .banner-slide .banner-info {
-      padding: 20px;
+      .banner {
+        .banner-slide {
+          .banner-content {
+            flex-direction: column;
+            padding: 1rem;
 
-      h2 {
-        font-size: 2rem;
-      }
+            img {
+              width: 100%;
+              max-height: 200px;
+              margin-bottom: 1rem;
+            }
 
-      p {
-        font-size: 1rem;
+            .banner-info {
+              width: 100%;
+              padding: 1rem;
+              text-align: center;
+
+              h2 {
+                font-size: 1.8rem;
+              }
+
+              p {
+                font-size: 1rem;
+              }
+
+              .explore-btn {
+                padding: 0.8rem 1.5rem;
+              }
+            }
+          }
+        }
       }
     }
   }
@@ -270,18 +303,23 @@
   .banner-section {
     height: 300px;
 
-    .banner .banner-slide .banner-info {
-      h2 {
-        font-size: 1.5rem;
-      }
+    .banner {
+      .banner-slide {
+        .banner-content {
+          .banner-info {
+            left: 10px;
+            right: 10px;
+            padding: 1rem;
 
-      p {
-        display: none;
-      }
+            h2 {
+              font-size: 1.5rem;
+            }
 
-      .explore-btn {
-        padding: 8px 20px;
-        font-size: 14px;
+            p {
+              font-size: 0.9rem;
+            }
+          }
+        }
       }
     }
   }

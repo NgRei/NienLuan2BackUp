@@ -66,6 +66,8 @@ const Footer = () => {
 
       <div className="footer-bottom">
         <p>© 2024 Shop Mô Hình.</p>
+        <p>Chuyên bán mô hình Gundam, sản phẩm chính hãng.</p>
+
       </div>
     </footer>
   );

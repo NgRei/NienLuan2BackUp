@@ -11,7 +11,7 @@ const loginRouter = require('./app/router/login.router');
 const fs = require('fs');
 const sessionStorage = require('node-sessionstorage');
 const { setAdminLocals } = require('./app/middlewares/admin.middleware');
-const categoriesRouter = require('./app/controller/category/category.js');
+const categoriesRouter = require('./app/controller/category/category');
 const productRoutes = require('./app/controller/product/product');
 
 
@@ -209,9 +209,8 @@ function configureApp() {
     });
    
     app.use(express.json());
-    app.use('/api', categoriesRouter);
-    app.use('/api', productRoutes);
-
+    app.use('/', categoriesRouter);
+    app.use('/', productRoutes);
     // Áp dụng middleware xác thực cho tất cả các route bên dưới
     app.use(checkAdmin);
 

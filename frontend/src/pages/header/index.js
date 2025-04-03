@@ -10,6 +10,7 @@ const Header = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showCategories, setShowCategories] = useState(false);
   const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -38,10 +39,14 @@ const Header = () => {
   useEffect(() => {
     const loadCategories = async () => {
       try {
+        setLoading(true);
         const data = await categoryService.getAllCategories();
-        setCategories(data);
+        setCategories(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Error loading categories:', error);
+        setCategories([]);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -138,18 +143,22 @@ const Header = () => {
               <i className="fas fa-bars"></i> Danh mục
             </button>
             <div className={`dropdown-menu ${showCategories ? 'show' : ''}`}>
-              <ul>
-                {categories.map((category) => (
-                  <li key={category.id}>
-                    <Link 
-                      to={`/category/${category.id}`}
-                      onClick={() => setShowCategories(false)}
-                    >
-                      {category.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+              {loading ? (
+                <div className="loading">Đang tải...</div>
+              ) : (
+                <ul>
+                  {Array.isArray(categories) && categories.map((category) => (
+                    <li key={category.id}>
+                      <Link 
+                        to={`/category/${category.id}`}
+                        onClick={() => setShowCategories(false)}
+                      >
+                        {category.name}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           </div>
 
