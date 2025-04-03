@@ -12,8 +12,7 @@ const fs = require('fs');
 const sessionStorage = require('node-sessionstorage');
 const { setAdminLocals } = require('./app/middlewares/admin.middleware');
 const categoriesRouter = require('./app/controller/category/category');
-const productRoutes = require('./app/controller/product/product');
-
+const productApiRoutes = require('./app/controller/product/api controller/product');
 
 // Thêm sessionStorage vào app.locals để sử dụng trong toàn bộ ứng dụng
 app.locals.sessionStorage = sessionStorage;
@@ -210,7 +209,9 @@ function configureApp() {
    
     app.use(express.json());
     app.use('/', categoriesRouter);
-    app.use('/', productRoutes);
+    app.use('/', productApiRoutes);
+
+
     // Áp dụng middleware xác thực cho tất cả các route bên dưới
     app.use(checkAdmin);
 
@@ -226,7 +227,8 @@ function configureApp() {
     app.use('/them-san-pham', AddProductRoutes);
     app.use('/san-pham/chinh-sua', EditProductRoutes);
     app.use('/user', userRoutes);
-
+    
+    app.use('/', productApiRoutes);
     // Thêm route debug này (chỉ nên dùng trong môi trường phát triển)
     app.get('/debug-session', (req, res) => {
         res.json({
@@ -284,8 +286,8 @@ function configureApp() {
             error: err
         });
     });
-
     
+        
 }
 
 // Khởi động server

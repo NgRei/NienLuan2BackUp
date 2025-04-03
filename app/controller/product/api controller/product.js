@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { ketnoi } = require('../../../connect-mySQL');
+const { ketnoi } = require('../../../../connect-mySQL');
 
 // Đổi route để khớp với cấu trúc thư mục
-router.get('/san-pham', async (req, res) => {  // Thay đổi route từ /api/products thành /san-pham
+router.get('/product', async (req, res) => {  // Thay đổi route từ /api/products thành /san-pham
     try {
         console.log('Đang lấy danh sách sản phẩm...'); // Debug log
 
@@ -38,19 +38,33 @@ router.get('/san-pham', async (req, res) => {  // Thay đổi route từ /api/pr
 });
 
 // GET sản phẩm theo category
-router.get('/api/products/category/:categoryId', async (req, res) => {
+router.get('/product/category/:categoryId', async (req, res) => {
     try {
-        const [rows] = await ketnoi.query(
-            `SELECT p.*, c.category_name 
-             FROM product p 
-             LEFT JOIN category c ON p.category_id = c.id 
-             WHERE p.category_id = ? AND p.status = 1`,
-            [req.params.categoryId]
-        );
+        console.log('Đang xử lý request cho categoryId:', req.params.categoryId);
+        
+        // Log câu query trước khi thực thi
+        const query = `SELECT p.*, c.name 
+                      FROM product p 
+                      LEFT JOIN category c ON p.category_id = c.id 
+                      WHERE p.category_id = ? AND p.status = 1`;
+
+        const [rows] = await ketnoi.query(query, [req.params.categoryId]);
+        
+        // Log kết quả
+        console.log(`Tìm thấy ${rows?.length || 0} sản phẩm cho danh mục ${req.params.categoryId}`);
+        
         res.json(rows);
     } catch (error) {
-        console.error('Error fetching products by category:', error);
-        res.status(500).json({ message: 'Internal server error' });
+        // Log chi tiết lỗi
+        console.error('Chi tiết lỗi:', {
+            message: error.message,
+            code: error.code,
+            stack: error.stack
+        });
+        res.status(500).json({ 
+            message: 'Internal server error',
+            error: error.message 
+        });
     }
 });
 
@@ -72,7 +86,7 @@ router.get('/test', async (req, res) => {
 });
 
 // GET sản phẩm nổi bật (8 sản phẩm có giá cao nhất)
-router.get('/san-pham/noi-bat', async (req, res) => {
+router.get('/product/noi-bat', async (req, res) => {
     try {
         const [rows] = await ketnoi.query(
             `SELECT 
@@ -106,7 +120,7 @@ router.get('/san-pham/noi-bat', async (req, res) => {
 });
 
 // GET thông tin danh mục
-router.get('/danh-muc/:id', async (req, res) => {
+router.get('/category/:id', async (req, res) => {
     try {
         const [rows] = await ketnoi.query(
             'SELECT * FROM category WHERE id = ?',
@@ -130,24 +144,24 @@ router.get('/danh-muc/:id', async (req, res) => {
 });
 
 // GET sản phẩm theo danh mục
-router.get('/san-pham/danh-muc/:categoryId', async (req, res) => {
-    try {
-        const [rows] = await ketnoi.query(
-            `SELECT * FROM product 
-             WHERE category_id = ? AND status = 1 
-             ORDER BY id DESC`,
-            [req.params.categoryId]
-        );
+// router.get('/product/category/:categoryId', async (req, res) => {
+//     try {
+//         const [rows] = await ketnoi.query(
+//             `SELECT * FROM product 
+//              WHERE category_id = ? AND status = 1 
+//              ORDER BY id DESC`,
+//             [req.params.categoryId]
+//         );
 
-        res.json(rows);
-    } catch (error) {
-        console.error('Lỗi khi truy vấn sản phẩm theo danh mục:', error);
-        res.status(500).json({
-            error: true,
-            message: 'Lỗi server: ' + error.message
-        });
-    }
-});
+//         res.json(rows);
+//     } catch (error) {
+//         console.error('Lỗi khi truy vấn sản phẩm theo danh mục:', error);
+//         res.status(500).json({
+//             error: true,
+//             message: 'Lỗi server: ' + error.message
+//         });
+//     }
+// });
 
 // GET chi tiết sản phẩm theo ID - Đổi route thành /product-detail/:id
 router.get('/product-detail/:id', async (req, res) => {
@@ -191,7 +205,7 @@ router.get('/product-detail/:id', async (req, res) => {
     }
 });
 // GET tìm kiếm sản phẩm
-router.get('/san-pham/tim-kiem', async (req, res) => {
+router.get('/product/tim-kiem', async (req, res) => {
     try {
         const searchTerm = req.query.q || '';
         console.log('Đang tìm kiếm sản phẩm với từ khóa:', searchTerm);
