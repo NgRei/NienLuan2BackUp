@@ -8,6 +8,7 @@ import Footer from './pages/footer';
 import Header from './pages/header';
 import CategoryPage from './pages/CategoryPage';
 import ProductDetail from './pages/ProductDetail';
+import SearchResults from './pages/SearchResults';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
                 <Route path={routers.USER.FOOTER} element={<Footer />} />
                 <Route path={routers.USER.HEADER} element={<Header />} />
                 <Route path={routers.USER.PRODUCT_DETAIL} element={<ProductDetail />} />
+                <Route path={routers.USER.SEARCH} element={<SearchResults />} />
                 {/* Các routes khác */}
               </Routes>
             </MasterLayout>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { productService } from '../../services/ProductService';
+import { productService } from '../../services/productService';
 import '../../styles/components/_product.scss';
 import { Link } from 'react-router-dom';
 

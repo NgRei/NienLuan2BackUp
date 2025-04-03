@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { productService } from '../../services/ProductService';
+import { productService } from '../../services/productService';
 import '../../styles/components/_CategoryPage.scss';
 
 const CategoryPage = () => {

@@ -43,5 +43,17 @@ export const productService = {
             console.error('Error fetching category:', error);
             return null;
         }
+    },
+
+    searchProducts: async (searchTerm) => {
+        try {
+            const response = await axios.get(`${BASE_URL}/san-pham/tim-kiem`, {
+                params: { q: searchTerm }
+            });
+            return response.data;
+        } catch (error) {
+            console.error('Error searching products:', error);
+            return [];
+        }
     }
 };

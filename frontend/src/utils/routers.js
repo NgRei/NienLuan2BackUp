@@ -5,6 +5,7 @@ export const routers = {
         LOGIN: "/login",
         CATEGORY: "/category/:id",
         PRODUCT_DETAIL: "/product/:id",
+        SEARCH: "/search",
     }
     
 }   

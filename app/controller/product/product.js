@@ -190,5 +190,42 @@ router.get('/product-detail/:id', async (req, res) => {
         });
     }
 });
+// GET tìm kiếm sản phẩm
+router.get('/san-pham/tim-kiem', async (req, res) => {
+    try {
+        const searchTerm = req.query.q || '';
+        console.log('Đang tìm kiếm sản phẩm với từ khóa:', searchTerm);
+
+        const [rows] = await ketnoi.query(
+            `SELECT 
+                id,
+                name,
+                category_id,
+                gia,
+                so_luong,
+                hang_san_xuat,
+                noi_xuat_xu,
+                nam_san_xuat,
+                mota,
+                hinh_anh,
+                status
+             FROM product 
+             WHERE status = 1 
+             AND LOWER(name) LIKE LOWER(?)
+             ORDER BY id DESC`,
+            [`%${searchTerm}%`]
+        );
+
+        console.log(`Tìm thấy ${rows.length} sản phẩm phù hợp với từ khóa`);
+        res.json(rows);
+
+    } catch (error) {
+        console.error('Lỗi khi tìm kiếm sản phẩm:', error);
+        res.status(500).json({
+            error: true,
+            message: 'Lỗi khi truy vấn database: ' + error.message
+        });
+    }
+});
 
 module.exports = router;

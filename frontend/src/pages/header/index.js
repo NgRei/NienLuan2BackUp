@@ -86,8 +86,10 @@ const Header = () => {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    // Xử lý tìm kiếm ở đây
-    console.log('Searching for:', searchTerm);
+    if (searchTerm.trim()) {
+        // Chuyển hướng đến trang kết quả tìm kiếm với query parameter
+        window.location.href = `/search?q=${encodeURIComponent(searchTerm.trim())}`;
+    }
   };
 
   const toggleCategories = () => {
