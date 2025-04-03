@@ -6,6 +6,7 @@ export const routers = {
         CATEGORY: "/category/:id",
         PRODUCT_DETAIL: "/product/:id",
         SEARCH: "/search",
+        PROFILE: "/profile",
     }
     
 }   

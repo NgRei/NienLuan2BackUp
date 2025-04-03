@@ -9,6 +9,7 @@ import Header from './pages/header';
 import CategoryPage from './pages/CategoryPage';
 import ProductDetail from './pages/ProductDetail';
 import SearchResults from './pages/SearchResults';
+import Profile from './pages/Profile';
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
                 <Route path={routers.USER.HEADER} element={<Header />} />
                 <Route path={routers.USER.PRODUCT_DETAIL} element={<ProductDetail />} />
                 <Route path={routers.USER.SEARCH} element={<SearchResults />} />
+                <Route path={routers.USER.PROFILE} element={<Profile />} />
                 {/* Các routes khác */}
               </Routes>
             </MasterLayout>

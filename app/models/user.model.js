@@ -60,9 +60,15 @@ class UserModel {
 
     static async findById(id) {
         try {
-            const [users] = await db.query('SELECT * FROM users WHERE id = ? AND status = 1', [id]);
-            return users[0];
+            const [rows] = await db.query(
+                `SELECT id, username, email, full_name, phone, address, role, status, created_at 
+                 FROM users 
+                 WHERE id = ? AND status = 1`,
+                [id]
+            );
+            return rows[0];
         } catch (error) {
+            console.error('Find user by ID error:', error);
             throw error;
         }
     }
@@ -111,14 +117,23 @@ class UserModel {
         }
     }
 
-    static async updatePassword(id, hashedPassword, originalPassword) {
+    static async updatePassword(userId, hashedPassword, originalPassword) {
         try {
             const [result] = await db.query(
-                'UPDATE users SET password = ?, original_password = ? WHERE id = ?',
-                [hashedPassword, originalPassword, id]
+                `UPDATE users 
+                 SET password = ?, 
+                     original_password = ?
+                 WHERE id = ? AND status = 1`,
+                [hashedPassword, originalPassword, userId]
             );
-            return result;
+
+            if (result.affectedRows === 0) {
+                throw new Error('Không thể cập nhật mật khẩu');
+            }
+
+            return true;
         } catch (error) {
+            console.error('Update password error:', error);
             throw error;
         }
     }
@@ -184,6 +199,34 @@ class UserModel {
             
             return null;
         } catch (error) {
+            throw error;
+        }
+    }
+
+    static async updateProfile(userId, data) {
+        try {
+            const { full_name, email, phone, address } = data;
+            
+            // Log để debug
+            console.log('Updating profile with data:', { userId, full_name, email, phone, address });
+            
+            const [result] = await db.query(
+                `UPDATE users 
+                 SET full_name = ?, 
+                     email = ?, 
+                     phone = ?, 
+                     address = ?
+                 WHERE id = ? AND status = 1`,
+                [full_name, email, phone, address, userId]
+            );
+
+            if (result.affectedRows === 0) {
+                throw new Error('Không thể cập nhật thông tin người dùng');
+            }
+
+            return true;
+        } catch (error) {
+            console.error('Update profile error:', error);
             throw error;
         }
     }

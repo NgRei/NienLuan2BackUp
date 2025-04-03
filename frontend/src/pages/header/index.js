@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import '../../styles/components/_header.scss'; 
 import { routers } from '../../utils/routers';
 import { categoryService } from '../../services/api';
+import { authService } from '../../services/authServices';
 
 const Header = () => {
   const [isVisible, setIsVisible] = useState(true);
@@ -11,6 +12,8 @@ const Header = () => {
   const [showCategories, setShowCategories] = useState(false);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userData, setUserData] = useState(null);
   const dropdownRef = useRef(null);
 
   useEffect(() => {
@@ -51,6 +54,12 @@ const Header = () => {
     };
 
     loadCategories();
+  }, []);
+
+  useEffect(() => {
+    const user = authService.getCurrentUser();
+    setIsAuthenticated(!!user);
+    setUserData(user);
   }, []);
 
   // Thêm useEffect để xử lý click outside
@@ -96,6 +105,12 @@ const Header = () => {
     setShowCategories(!showCategories);
   };
 
+  const handleLogout = () => {
+    authService.logout();
+    setIsAuthenticated(false);
+    setUserData(null);
+  };
+
   return (
     <header className={`container ${isVisible ? 'header-visible' : 'header-hidden'}`}>
       <nav className="main-nav">
@@ -120,12 +135,32 @@ const Header = () => {
         </div>
 
         <ul className="nav-links">
-          <li>
-            <Link to={routers.USER.LOGIN} className="icon-link">
-              <i className="fas fa-user"></i>
-              <span className="icon-text">Đăng nhập</span>
-            </Link>
-          </li>
+          {isAuthenticated ? (
+            <>
+              <li>
+                <span className="user-name">Xin chào, {userData?.fullName}</span>
+              </li>
+              <li>
+                <Link to="/profile" className="icon-link">
+                  <i className="fas fa-user"></i>
+                  <span className="icon-text">Tài khoản</span>
+                </Link>
+              </li>
+              {/* <li>
+                <button onClick={handleLogout} className="icon-link">
+                  <i className="fas fa-sign-out-alt"></i>
+                  <span className="icon-text">Đăng xuất</span>
+                </button>
+              </li> */}
+            </>
+          ) : (
+            <li>
+              <Link to="/login" className="icon-link">
+                <i className="fas fa-user"></i>
+                <span className="icon-text">Đăng nhập</span>
+              </Link>
+            </li>
+          )}
           <li>
             <Link to="/cart" className="icon-link">
               <i className="fas fa-shopping-cart"></i>

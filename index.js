@@ -13,10 +13,16 @@ const sessionStorage = require('node-sessionstorage');
 const { setAdminLocals } = require('./app/middlewares/admin.middleware');
 const categoriesRouter = require('./app/controller/category/category');
 const productApiRoutes = require('./app/controller/product/api controller/product');
+require('dotenv').config();
 
 // Thêm sessionStorage vào app.locals để sử dụng trong toàn bộ ứng dụng
 app.locals.sessionStorage = sessionStorage;
 // Kiểm tra kết nối database khi khởi động
+console.log('Environment variables:', {
+    JWT_SECRET: process.env.JWT_SECRET ? 'Configured' : 'Not configured',
+    PORT: process.env.PORT,
+    NODE_ENV: process.env.NODE_ENV
+});
 async function init() {
     try {
         // Kiểm tra kết nối pool
@@ -80,8 +86,10 @@ async function checkTables() {
 function configureApp() {
     // Thêm CORS middleware ngay đầu tiên
     app.use(cors({
-        origin: 'http://localhost:3000',
-        credentials: true
+        origin: 'http://localhost:3000', // URL của frontend
+        credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'DELETE'],
+        allowedHeaders: ['Content-Type', 'Authorization']
     }));
 
     // Thêm cấu hình session trước các middleware khác
@@ -210,7 +218,7 @@ function configureApp() {
     app.use(express.json());
     app.use('/', categoriesRouter);
     app.use('/', productApiRoutes);
-
+    app.use('/api/auth', require('./app/router/auth.router'));
 
     // Áp dụng middleware xác thực cho tất cả các route bên dưới
     app.use(checkAdmin);
@@ -295,6 +303,14 @@ function startServer() {
     configureApp();
     
     const PORT = process.env.PORT || 3001;
+    app.use((err, req, res, next) => {
+        console.error('Error:', err);
+        res.status(500).json({
+            success: false,
+            message: 'Internal Server Error',
+            error: process.env.NODE_ENV === 'development' ? err.message : undefined
+        });
+    });
     app.listen(PORT, function () {
         console.log(`Server is running on port ${PORT}`);
         console.log(`Visit http://localhost:${PORT} to view the app`);
