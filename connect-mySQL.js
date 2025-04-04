@@ -24,6 +24,11 @@ const testPool = async () => {
     }
 };
 
+setInterval(async () => {
+    await testPool();
+}, 30000);
+
+
 // Export cả pool và hàm test
 module.exports = {
     ketnoi: pool,

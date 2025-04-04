@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { productService } from '../../services/productService';
 import '../../styles/components/_CategoryPage.scss';
+import { toast } from 'react-hot-toast';
+import { cartService } from '../../services/cartService';
+import { useNavigate } from 'react-router-dom';
 
 const CategoryPage = () => {
     const { id } = useParams();
@@ -9,6 +12,7 @@ const CategoryPage = () => {
     const [category, setCategory] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchCategoryData = async () => {
@@ -32,6 +36,30 @@ const CategoryPage = () => {
 
         fetchCategoryData();
     }, [id]);
+
+    const handleAddToCart = async (productId, event) => {
+        try {
+            // Ngăn chặn event bubbling
+            event.stopPropagation();
+            
+            // Kiểm tra đăng nhập
+            const token = localStorage.getItem('userToken');
+            if (!token) {
+                toast.error('Vui lòng đăng nhập để thêm vào giỏ hàng');
+                navigate('/login');
+                return;
+            }
+
+            await cartService.addToCart(productId, 1);
+            toast.success('Đã thêm vào giỏ hàng', {
+                duration: 2000,
+                position: 'top-right',
+            });
+        } catch (error) {
+            console.error('Add to cart error:', error);
+            toast.error(error.response?.data?.message || 'Không thể thêm vào giỏ hàng');
+        }
+    };
 
     if (loading) {
         return <div className="category-loading">Đang tải...</div>;
@@ -79,7 +107,10 @@ const CategoryPage = () => {
                                         Xuất xứ: {product.noi_xuat_xu}
                                     </p>
                                 )}
-                                <button className="add-to-cart-btn">
+                                <button 
+                                    className="add-to-cart-btn"
+                                    onClick={(e) => handleAddToCart(product.id, e)}
+                                >
                                     Thêm vào giỏ hàng
                                 </button>
                             </div>

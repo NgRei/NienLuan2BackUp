@@ -105,11 +105,6 @@ const Header = () => {
     setShowCategories(!showCategories);
   };
 
-  const handleLogout = () => {
-    authService.logout();
-    setIsAuthenticated(false);
-    setUserData(null);
-  };
 
   return (
     <header className={`container ${isVisible ? 'header-visible' : 'header-hidden'}`}>
@@ -146,12 +141,6 @@ const Header = () => {
                   <span className="icon-text">Tài khoản</span>
                 </Link>
               </li>
-              {/* <li>
-                <button onClick={handleLogout} className="icon-link">
-                  <i className="fas fa-sign-out-alt"></i>
-                  <span className="icon-text">Đăng xuất</span>
-                </button>
-              </li> */}
             </>
           ) : (
             <li>

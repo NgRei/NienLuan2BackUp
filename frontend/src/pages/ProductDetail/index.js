@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../../styles/components/_ProductDetail.scss';
-
+import '../../styles/components/_buttons.scss';
+import { toast } from 'react-hot-toast';
+import { cartService } from '../../services/cartService';
+import { routers } from '../../utils/routers';
 const ProductDetail = () => {
+  const navigate = useNavigate(); 
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -37,6 +41,21 @@ const ProductDetail = () => {
 
     fetchProduct();
   }, [id]);
+
+  const handleAddToCart = async () => {
+    try {
+      await cartService.addToCart(product.id, 1);
+      toast.success('Đã thêm vào giỏ hàng', {
+        duration: 2000,
+        action: {
+          label: 'Xem giỏ hàng',
+          onClick: () => navigate(routers.USER.CART)
+        }
+      });
+    } catch (error) {
+      toast.error('Không thể thêm vào giỏ hàng');
+    }
+  };
 
   if (loading) {
     return (
@@ -113,6 +132,17 @@ const ProductDetail = () => {
         <div className="description">
           <h2>Mô tả sản phẩm</h2>
           <p>{product.mota}</p>
+        </div>
+        <div>
+          <button 
+            className="add-to-cart-btn"
+            onClick={handleAddToCart}
+          >
+            Thêm vào giỏ hàng
+          </button>
+          <Link to="/cart" className="view-cart-btn">
+            Xem giỏ hàng
+          </Link>
         </div>
       </div>
     </div>

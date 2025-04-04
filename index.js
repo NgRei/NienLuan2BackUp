@@ -13,6 +13,7 @@ const sessionStorage = require('node-sessionstorage');
 const { setAdminLocals } = require('./app/middlewares/admin.middleware');
 const categoriesRouter = require('./app/controller/category/category');
 const productApiRoutes = require('./app/controller/product/api controller/product');
+const cartRouter = require('./app/router/cart.router');
 require('dotenv').config();
 
 // Thêm sessionStorage vào app.locals để sử dụng trong toàn bộ ứng dụng
@@ -191,7 +192,6 @@ function configureApp() {
         next();
     });
 
-    // Import các router
     const CategoryRoutes = require('./app/router/category/category.router');
     const AddCategoryRoutes = require('./app/router/category/add-category.router');
     const editCategoryRoutes = require('./app/router/category/edit-category.router');
@@ -219,7 +219,7 @@ function configureApp() {
     app.use('/', categoriesRouter);
     app.use('/', productApiRoutes);
     app.use('/api/auth', require('./app/router/auth.router'));
-
+    app.use('/api/cart', cartRouter);
     // Áp dụng middleware xác thực cho tất cả các route bên dưới
     app.use(checkAdmin);
 
@@ -289,9 +289,10 @@ function configureApp() {
     // Middleware xử lý lỗi
     app.use((err, req, res, next) => {
         console.error('Error:', err);
-        res.status(err.status || 500).render('error', {
-            message: err.message || 'Đã xảy ra lỗi',
-            error: err
+        res.status(500).json({
+            success: false,
+            message: 'Internal Server Error',
+            error: process.env.NODE_ENV === 'development' ? err.stack : undefined
         });
     });
     
@@ -308,7 +309,7 @@ function startServer() {
         res.status(500).json({
             success: false,
             message: 'Internal Server Error',
-            error: process.env.NODE_ENV === 'development' ? err.message : undefined
+            error: process.env.NODE_ENV === 'development' ? err.stack : undefined
         });
     });
     app.listen(PORT, function () {
@@ -319,5 +320,20 @@ function startServer() {
 
 // Bắt đầu khởi tạo
 init();
+
+// Thêm error handling tốt hơn
+process.on('uncaughtException', (error) => {
+    console.error('Uncaught Exception:', error);
+    // Log error vào file
+    fs.appendFileSync('error.log', `${new Date().toISOString()} - ${error.stack}\n`);
+});
+
+// Thêm logging chi tiết hơn trong middleware
+app.use((req, res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+    console.log('Headers:', req.headers);
+    console.log('Body:', req.body);
+    next();
+});
 
 module.exports = app;
