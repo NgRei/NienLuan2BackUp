@@ -193,3 +193,42 @@ $spacing-unit: 1rem;
         font-size: 1.1rem;
     }
 }
+
+// Style cho nút "Xem giỏ hàng" trong trang ProductDetail
+.view-cart-btn {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: #4CAF50; // Màu xanh lá
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-align: center;
+    margin-top: 15px;
+    border: 2px solid #4CAF50;
+
+    &:hover {
+        background-color: white;
+        color: #4CAF50;
+        text-decoration: none;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    &:active {
+        transform: translateY(0);
+    }
+}
+
+
+
+// Media queries cho responsive
+@media (max-width: 768px) {
+    .view-cart-btn,
+    .continue-shopping {
+        width: 100%; // Full width trên mobile
+        margin: 10px 0;
+        padding: 10px 20px;
+    }
+}
