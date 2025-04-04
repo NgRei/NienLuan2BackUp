@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { productService } from '../../services/productService';
 import '../../styles/components/_CategoryPage.scss';
 import { toast } from 'react-hot-toast';
 import { cartService } from '../../services/cartService';
-import { useNavigate } from 'react-router-dom';
 
 const CategoryPage = () => {
     const { id } = useParams();
@@ -13,6 +12,7 @@ const CategoryPage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
         const fetchCategoryData = async () => {
@@ -37,14 +37,14 @@ const CategoryPage = () => {
         fetchCategoryData();
     }, [id]);
 
-    const handleAddToCart = async (productId, event) => {
+    const handleAddToCart = async (productId, e) => {
         try {
-            // Ngăn chặn event bubbling
-            event.stopPropagation();
+            e.preventDefault(); // Ngăn chặn chuyển hướng đến trang chi tiết
+            e.stopPropagation(); // Ngăn chặn sự kiện nổi bọt
             
-            // Kiểm tra đăng nhập
             const token = localStorage.getItem('userToken');
             if (!token) {
+                localStorage.setItem('redirectAfterLogin', location.pathname);
                 toast.error('Vui lòng đăng nhập để thêm vào giỏ hàng');
                 navigate('/login');
                 return;
@@ -83,37 +83,38 @@ const CategoryPage = () => {
 
             <div className="products-grid">
                 {products.map((product) => (
-                    <Link to={`/product/${product.id}`} key={product.id} className="product-link">
-                        <div className="product-card">
-                            <div className="product-image">
-                                <img 
-                                    src={`http://localhost:3001/uploads/${product.hinh_anh}`}
-                                    alt={product.name}
-                                    onError={(e) => {
-                                        e.target.src = '/placeholder.jpg';
-                                    }}
-                                />
-                            </div>
-                            <div className="product-info">
-                                <h3>{product.name}</h3>
-                                <p className="price">
-                                    {new Intl.NumberFormat('vi-VN', {
-                                        style: 'currency',
-                                        currency: 'VND'
-                                    }).format(product.gia)}
-                                </p>
-                                {product.noi_xuat_xu && (
-                                    <p className="origin">
-                                        Xuất xứ: {product.noi_xuat_xu}
-                                    </p>
-                                )}
-                                <button 
-                                    className="add-to-cart-btn"
-                                    onClick={(e) => handleAddToCart(product.id, e)}
-                                >
-                                    Thêm vào giỏ hàng
-                                </button>
-                            </div>
+                    <Link 
+                        to={`/product/${product.id}`} 
+                        key={product.id} 
+                        className="product-card"
+                    >
+                        <div className="product-image">
+                            <img 
+                                src={`http://localhost:3001/uploads/${product.hinh_anh}`}
+                                alt={product.name}
+                                onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = '/placeholder.jpg';
+                                }}
+                            />
+                        </div>
+                        <div className="product-info">
+                            <h3>{product.name}</h3>
+                            <p className="price">
+                                {new Intl.NumberFormat('vi-VN', {
+                                    style: 'currency',
+                                    currency: 'VND'
+                                }).format(product.gia)}
+                            </p>
+                            {product.noi_xuat_xu && (
+                                <p className="origin">Xuất xứ: {product.noi_xuat_xu}</p>
+                            )}
+                            <button 
+                                className="add-to-cart-btn"
+                                onClick={(e) => handleAddToCart(product.id, e)}
+                            >
+                                Thêm vào giỏ hàng
+                            </button>
                         </div>
                     </Link>
                 ))}

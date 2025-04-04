@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../../services/authServices';
 import '../../styles/components/_profile.scss';
+import { toast } from 'react-hot-toast';
 
 const Profile = () => {
     const navigate = useNavigate();
@@ -80,8 +81,20 @@ const Profile = () => {
     };
 
     const handleLogout = () => {
-        authService.logout();
-        navigate('/login');
+        try {
+            // Xóa token và user data từ localStorage
+            localStorage.removeItem('userToken');
+            localStorage.removeItem('userData');
+            
+            // Sử dụng window.location.href để reload trang và chuyển về trang chủ
+            window.location.href = '/';
+            
+            // Hoặc có thể dùng window.location.replace('/') cũng được
+            // window.location.replace('/');
+        } catch (error) {
+            console.error('Logout error:', error);
+            toast.error('Có lỗi xảy ra khi đăng xuất');
+        }
     };
 
     if (!user) return null;

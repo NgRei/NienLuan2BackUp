@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { productService } from '../../services/productService';
 import { cartService } from '../../services/cartService';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import '../../styles/components/_CategorySection.scss';
 
@@ -10,6 +10,7 @@ const CategorySection = ({ categoryId, categoryName, categoryDescription }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
         const fetchCategoryProducts = async () => {
@@ -33,13 +34,15 @@ const CategorySection = ({ categoryId, categoryName, categoryDescription }) => {
 
     const handleAddToCart = async (productId, event) => {
         try {
-            // Ngăn chặn sự kiện click lan truyền lên phần tử cha (Link)
+            // Ngăn chặn event bubbling
             event.preventDefault();
             event.stopPropagation();
             
             // Kiểm tra đăng nhập
             const token = localStorage.getItem('userToken');
             if (!token) {
+                // Lưu lại URL hiện tại
+                localStorage.setItem('redirectAfterLogin', location.pathname);
                 toast.error('Vui lòng đăng nhập để thêm vào giỏ hàng');
                 navigate('/login');
                 return;

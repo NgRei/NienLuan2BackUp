@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { authService } from '../../services/authServices';
+import { toast } from 'react-hot-toast';
 import '../../styles/components/_login.scss';
 
 const Login = () => {
@@ -36,7 +37,17 @@ const Login = () => {
             if (response.success) {
                 localStorage.setItem('userToken', response.token);
                 localStorage.setItem('userData', JSON.stringify(response.user));
-                navigate('/');
+                
+                // Kiểm tra và xử lý redirect
+                const redirectPath = localStorage.getItem('redirectAfterLogin');
+                if (redirectPath) {
+                    localStorage.removeItem('redirectAfterLogin'); // Xóa path đã lưu
+                    navigate(redirectPath); // Chuyển về trang sản phẩm
+                    toast.success('Đăng nhập thành công! Bạn có thể tiếp tục thêm vào giỏ hàng.');
+                } else {
+                    navigate('/'); // Nếu không có redirect path thì về trang chủ
+                    toast.success('Đăng nhập thành công!');
+                }
             } else {
                 setError(response.message || 'Đăng nhập thất bại');
             }
@@ -58,46 +69,54 @@ const Login = () => {
     };
 
     return (
-        <div className="login-container">
-            <div className="login-form">
-                <h2>Đăng nhập</h2>
-                {error && <div className="error-message">{error}</div>}
+        <div className="login-page">
+            <div className="login-wrapper">
+                <div className="login-brand">
+                    <Link to="/" className="brand-link">
+                        <h1>ShopMoHinh</h1>
+                    </Link>
+                </div>
                 
-                <form onSubmit={handleSubmit}>
-                    <div className="form-group">
-                        <label>Tên đăng nhập hoặc Email:</label>
-                        <input
-                            type="text"
-                            name="username"
-                            value={formData.username}
-                            onChange={handleChange}
-                            placeholder="Nhập tên đăng nhập hoặc email"
-                        />
+                <div className="login-form">
+                    <h2>Đăng nhập</h2>
+                    {error && <div className="error-message">{error}</div>}
+                    
+                    <form onSubmit={handleSubmit}>
+                        <div className="form-group">
+                            <label>Tên đăng nhập hoặc :</label>
+                            <input
+                                type="text"
+                                name="username"
+                                value={formData.username}
+                                onChange={handleChange}
+                                placeholder="Nhập tên đăng nhập hoặc email"
+                            />
+                        </div>
+
+                        <div className="form-group">
+                            <label>Mật khẩu:</label>
+                            <input
+                                type="password"
+                                name="password"
+                                value={formData.password}
+                                onChange={handleChange}
+                                placeholder="Nhập mật khẩu"
+                            />
+                        </div>
+
+                        <button 
+                            type="submit" 
+                            className="login-button"
+                            disabled={loading}
+                        >
+                            {loading ? 'Đang xử lý...' : 'Đăng nhập'}
+                        </button>
+                    </form>
+
+                    <div className="additional-links">
+                        <Link to="/forgot-password">Quên mật khẩu?</Link>
+                        <Link to="/register">Đăng ký tài khoản mới</Link>
                     </div>
-
-                    <div className="form-group">
-                        <label>Mật khẩu:</label>
-                        <input
-                            type="password"
-                            name="password"
-                            value={formData.password}
-                            onChange={handleChange}
-                            placeholder="Nhập mật khẩu"
-                        />
-                    </div>
-
-                    <button 
-                        type="submit" 
-                        className="login-button"
-                        disabled={loading}
-                    >
-                        {loading ? 'Đang xử lý...' : 'Đăng nhập'}
-                    </button>
-                </form>
-
-                <div className="additional-links">
-                    <a href="/forgot-password">Quên mật khẩu?</a>
-                    <a href="/register">Đăng ký tài khoản mới</a>
                 </div>
             </div>
         </div>

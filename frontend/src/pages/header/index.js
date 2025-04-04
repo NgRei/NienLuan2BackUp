@@ -150,12 +150,21 @@ const Header = () => {
               </Link>
             </li>
           )}
+          {isAuthenticated ? (
           <li>
             <Link to="/cart" className="icon-link">
               <i className="fas fa-shopping-cart"></i>
               <span className="icon-text">Giỏ hàng</span>
-            </Link>
-          </li>
+              </Link>
+            </li>
+          ) : (
+            <li>
+              <Link to="/login" className="icon-link">  
+                <i className="fas fa-shopping-cart"></i>
+                <span className="icon-text">Giỏ hàng</span>
+              </Link>
+            </li>
+          )}
         </ul>
       </nav>
 
@@ -188,11 +197,11 @@ const Header = () => {
             </div>
           </div>
 
-          <div className="info-links">
+          {/* <div className="info-links">
             <Link to="/about">Giới thiệu</Link>
             <Link to="/policy">Chính sách</Link>
             <Link to="/warranty">Bảo hành</Link>
-          </div>
+          </div> */}
         </div>
 
         <div className="contact-info">

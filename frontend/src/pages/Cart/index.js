@@ -1,16 +1,27 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { cartService } from '../../services/cartService';
 import '../../styles/components/_cart.scss';
+import { toast } from 'react-hot-toast';
 
 const Cart = () => {
     const [cartItems, setCartItems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const location = useLocation();
+    const scrollPosition = useRef(0);
 
     useEffect(() => {
         loadCart();
     }, []);
+
+    useEffect(() => {
+        scrollPosition.current = window.scrollY;
+    });
+
+    useEffect(() => {
+        window.scrollTo(0, scrollPosition.current);
+    }, [cartItems]);
 
     const loadCart = async () => {
         try {
@@ -31,27 +42,35 @@ const Cart = () => {
         }
     };
 
-    const handleUpdateQuantity = async (cartId, quantity) => {
-        if (!cartId || quantity < 1) return;
+    const handleUpdateQuantity = async (productId, newQuantity) => {
+        if (!productId || newQuantity < 1) return;
         
         try {
-            await cartService.updateQuantity(cartId, quantity);
-            loadCart();
+            await cartService.updateQuantity(productId, newQuantity);
+            setCartItems(prevItems => 
+                prevItems.map(item => 
+                    item.id === productId 
+                        ? { ...item, quantity: newQuantity }
+                        : item
+                )
+            );
+            toast.success('Đã cập nhật số lượng');
         } catch (error) {
             console.error('Update quantity error:', error);
-            setError('Lỗi khi cập nhật số lượng');
+            toast.error('Không thể cập nhật số lượng');
         }
     };
 
-    const handleRemoveItem = async (cartId) => {
-        if (!cartId) return;
+    const handleRemoveItem = async (productId) => {
+        if (!productId) return;
         
         try {
-            await cartService.removeFromCart(cartId);
-            loadCart();
+            await cartService.removeFromCart(productId);
+            setCartItems(prevItems => prevItems.filter(item => item.id !== productId));
+            toast.success('Đã xóa sản phẩm khỏi giỏ hàng');
         } catch (error) {
             console.error('Remove item error:', error);
-            setError('Lỗi khi xóa sản phẩm');
+            toast.error('Không thể xóa sản phẩm');
         }
     };
 

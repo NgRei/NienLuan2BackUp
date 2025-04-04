@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import axios from 'axios';
 import '../../styles/components/_ProductDetail.scss';
 import '../../styles/components/_buttons.scss';
@@ -7,7 +7,8 @@ import { toast } from 'react-hot-toast';
 import { cartService } from '../../services/cartService';
 import { routers } from '../../utils/routers';
 const ProductDetail = () => {
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
+  const location = useLocation();
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -44,16 +45,22 @@ const ProductDetail = () => {
 
   const handleAddToCart = async () => {
     try {
+      const token = localStorage.getItem('userToken');
+      if (!token) {
+        localStorage.setItem('redirectAfterLogin', location.pathname);
+        toast.error('Vui lòng đăng nhập để thêm vào giỏ hàng');
+        navigate('/login');
+        return;
+      }
+
       await cartService.addToCart(product.id, 1);
       toast.success('Đã thêm vào giỏ hàng', {
         duration: 2000,
-        action: {
-          label: 'Xem giỏ hàng',
-          onClick: () => navigate(routers.USER.CART)
-        }
+        position: 'top-right',
       });
     } catch (error) {
-      toast.error('Không thể thêm vào giỏ hàng');
+      console.error('Add to cart error:', error);
+      toast.error(error.response?.data?.message || 'Không thể thêm vào giỏ hàng');
     }
   };
 

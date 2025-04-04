@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, Link, useNavigate } from 'react-router-dom';
 import { productService } from '../../services/productService';
 import '../../styles/components/_SearchResults.scss';
+import { toast } from 'react-hot-toast';
+import { cartService } from '../../services/cartService';
 
 const SearchResults = () => {
     const [products, setProducts] = useState([]);
@@ -10,7 +12,7 @@ const SearchResults = () => {
     const location = useLocation();
     const searchParams = new URLSearchParams(location.search);
     const searchTerm = searchParams.get('q');
-
+    const navigate = useNavigate();
     useEffect(() => {
         const fetchSearchResults = async () => {
             try {
@@ -31,6 +33,26 @@ const SearchResults = () => {
             fetchSearchResults();
         }
     }, [searchTerm]);
+    const handleAddToCart = async (productId) => {
+        try {
+            // Kiểm tra đăng nhập
+            const token = localStorage.getItem('userToken');
+            if (!token) {
+                toast.error('Vui lòng đăng nhập để thêm vào giỏ hàng');
+                navigate('/login');
+                return;
+            }
+
+            await cartService.addToCart(productId, 1);
+            toast.success('Đã thêm vào giỏ hàng', {
+                duration: 2000,
+                position: 'top-right',
+            });
+        } catch (error) {
+            console.error('Add to cart error:', error);
+            toast.error(error.response?.data?.message || 'Không thể thêm vào giỏ hàng');
+        }
+    };
 
     if (loading) {
         return <div className="search-loading">Đang tìm kiếm...</div>;
@@ -76,6 +98,15 @@ const SearchResults = () => {
                                                 Xuất xứ: {product.noi_xuat_xu}
                                             </p>
                                         )}
+                                        <button
+                                            className="add-to-cart-btn"
+                                            onClick={(e) => {
+                                                e.preventDefault(); // Ngăn chặn chuyển hướng đến trang chi tiết
+                                                handleAddToCart(product.id);
+                                            }}
+                                        >
+                                            Thêm vào giỏ hàng
+                                        </button>
                                     </div>
                                 </div>
                             </Link>
