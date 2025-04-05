@@ -53,13 +53,12 @@ class CheckoutController {
 
     // Xử lý đơn hàng khi người dùng submit form checkout
     static async createOrder(req, res) {
-        // Bắt đầu transaction
         const connection = await ketnoi.getConnection();
         
         try {
             await connection.beginTransaction();
             
-            const userId = req.user.userId; // Từ auth middleware
+            const userId = req.user.userId;
             const { shipping_address, payment_method, notes } = req.body;
             
             // Lấy giỏ hàng từ database
@@ -121,6 +120,13 @@ class CheckoutController {
                 );
             }
             
+            // THÊM MỚI: Tạo payment record
+            await connection.query(
+                `INSERT INTO payments (order_id, payment_amount, payment_method, payment_status, payment_date) 
+                 VALUES (?, ?, ?, 'pending', NOW())`,
+                [orderId, total_amount, payment_method]
+            );
+            
             // Xóa giỏ hàng
             await connection.query('DELETE FROM carts WHERE user_id = ?', [userId]);
             
@@ -137,10 +143,10 @@ class CheckoutController {
         } catch (error) {
             // Rollback nếu có lỗi
             await connection.rollback();
-            console.error('Order creation error:', error);
+            console.error('Checkout error:', error);
             res.status(500).json({
                 success: false,
-                message: 'Đã xảy ra lỗi khi tạo đơn hàng'
+                message: 'Lỗi khi xử lý đơn hàng'
             });
         } finally {
             // Trả connection về pool

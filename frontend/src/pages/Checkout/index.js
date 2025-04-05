@@ -121,7 +121,7 @@ const Checkout = () => {
                     <div class="success-popup-content">
                         <i class="fa fa-check-circle"></i>
                         <h2>Đặt hàng thành công!</h2>
-                        <p>Cảm ơn bạn đã đặt hàng. Đơn hàng #${data.orderId} của bạn đã được tiếp nhận.</p>
+                        <p>Cảm ơn bạn đã đặt hàng. Đơn hàng của bạn đã được tiếp nhận.</p>
                     </div>
                 `;
                 document.body.appendChild(popup);
