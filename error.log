@@ -1,0 +1,11 @@
+2025-04-05T02:34:54.796Z - Error
+    at PromisePool.query (D:\NienLuan2BackUp\node_modules\mysql2\lib\promise\pool.js:36:22)
+    at OrderModel.getAllOrders (D:\NienLuan2BackUp\app\models\orders.model.js:28:39)
+    at index (D:\NienLuan2BackUp\app\controller\orders.controller.js:10:41)
+    at Layer.handle [as handle_request] (D:\NienLuan2BackUp\node_modules\express\lib\router\layer.js:95:5)
+    at next (D:\NienLuan2BackUp\node_modules\express\lib\router\route.js:149:13)
+    at Route.dispatch (D:\NienLuan2BackUp\node_modules\express\lib\router\route.js:119:3)
+    at Layer.handle [as handle_request] (D:\NienLuan2BackUp\node_modules\express\lib\router\layer.js:95:5)
+    at D:\NienLuan2BackUp\node_modules\express\lib\router\index.js:284:15
+    at Function.process_params (D:\NienLuan2BackUp\node_modules\express\lib\router\index.js:346:12)
+    at next (D:\NienLuan2BackUp\node_modules\express\lib\router\index.js:280:10)

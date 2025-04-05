@@ -83,13 +83,13 @@ const Login = () => {
                     
                     <form onSubmit={handleSubmit}>
                         <div className="form-group">
-                            <label>Tên đăng nhập hoặc :</label>
+                            <label>Tên đăng nhập :</label>
                             <input
                                 type="text"
                                 name="username"
                                 value={formData.username}
                                 onChange={handleChange}
-                                placeholder="Nhập tên đăng nhập hoặc email"
+                                placeholder="Nhập tên đăng nhập"
                             />
                         </div>
 
