@@ -3,15 +3,27 @@ const CartModel = require('../models/cart.model');
 class CartController {
     static async getCart(req, res) {
         try {
+            console.log('Getting cart...');
+            console.log('User:', req.user);
+
             const userId = req.user.userId;
+            if (!userId) {
+                return res.status(401).json({
+                    success: false,
+                    message: 'Không có thông tin user ID'
+                });
+            }
+
             const cartItems = await CartModel.getCartByUserId(userId);
-            
-            res.json({
+            console.log('Cart items found:', cartItems);
+
+            return res.status(200).json({
                 success: true,
                 cart: cartItems
             });
         } catch (error) {
-            res.status(500).json({
+            console.error('Cart fetch error:', error);
+            return res.status(500).json({
                 success: false,
                 message: 'Lỗi khi lấy thông tin giỏ hàng'
             });

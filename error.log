@@ -9,3 +9,13 @@
     at D:\NienLuan2BackUp\node_modules\express\lib\router\index.js:284:15
     at Function.process_params (D:\NienLuan2BackUp\node_modules\express\lib\router\index.js:346:12)
     at next (D:\NienLuan2BackUp\node_modules\express\lib\router\index.js:280:10)
+2025-04-05T07:29:13.858Z - Error: read ECONNRESET
+    at PromisePool.query (D:\NienLuan2BackUp\node_modules\mysql2\lib\promise\pool.js:36:22)
+    at OrderModel.getAllOrders (D:\NienLuan2BackUp\app\models\orders.model.js:29:44)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async index (D:\NienLuan2BackUp\app\controller\orders.controller.js:10:24)
+2025-04-05T07:29:13.923Z - Error: read ECONNRESET
+    at PromisePool.query (D:\NienLuan2BackUp\node_modules\mysql2\lib\promise\pool.js:36:22)
+    at OrderModel.getAllOrders (D:\NienLuan2BackUp\app\models\orders.model.js:29:44)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async index (D:\NienLuan2BackUp\app\controller\orders.controller.js:10:24)

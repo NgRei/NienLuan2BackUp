@@ -8,6 +8,7 @@ export const routers = {
         PRODUCT_DETAIL: "/product/:id",
         SEARCH: "/search",
         CART: "/cart",
+        CHECKOUT: "/checkout",
     }
     
 }   

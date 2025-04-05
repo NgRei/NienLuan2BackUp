@@ -129,7 +129,7 @@ class OrderModel {
 
     static async getOrderItems(orderId) {
         const [items] = await ketnoi.query(
-            `SELECT oi.*, p.name, p.mota, p.hinh_anh
+            `SELECT oi.*, p.name, p.hinh_anh 
              FROM order_items oi
              JOIN product p ON oi.product_id = p.id
              WHERE oi.order_id = ?`,

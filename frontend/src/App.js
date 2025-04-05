@@ -2,7 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Toaster } from 'react-hot-toast'; 
 import { routers } from './utils/routers';
-
+import { AuthProvider } from './contexts/AuthContext';
 import HomePage from './pages/homePage';
 
 import Login from './pages/login';
@@ -14,15 +14,16 @@ import ProductDetail from './pages/ProductDetail';
 import SearchResults from './pages/SearchResults';
 import Profile from './pages/Profile';
 import Cart from './pages/Cart';
-
+import Checkout from './pages/Checkout';
 import MainLayout from './components/layouts/MainLayouts';
 import ScrollToTop from './components/ScrollToTop';
 
 function App() {
   return (
     <Router>
-      <div className="App">
-        <Toaster 
+      <AuthProvider>
+        <div className="App">
+          <Toaster 
           position="top-right"
           toastOptions={{
             // Styling
@@ -62,9 +63,11 @@ function App() {
           <Route path={routers.USER.SEARCH} element={<MainLayout> <SearchResults /> <Footer /></MainLayout>} />
           <Route path={routers.USER.PROFILE} element={<MainLayout> <Profile /> <Footer /></MainLayout>} />
           <Route path={routers.USER.CART} element={<MainLayout> <Cart /> <Footer /></MainLayout>} />
+          <Route path={routers.USER.CHECKOUT} element={<MainLayout> <Checkout /> <Footer /></MainLayout>} />
           {/* ... other routes that need the main layout */}
         </Routes>
       </div>
+      </AuthProvider>
     </Router>
   );
 }

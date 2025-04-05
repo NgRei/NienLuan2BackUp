@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { cartService } from '../../services/cartService';
 import '../../styles/components/_cart.scss';
 import { toast } from 'react-hot-toast';
@@ -10,6 +10,7 @@ const Cart = () => {
     const [error, setError] = useState('');
     const location = useLocation();
     const scrollPosition = useRef(0);
+    const navigate = useNavigate();
 
     useEffect(() => {
         loadCart();
@@ -80,6 +81,7 @@ const Cart = () => {
             return total + (Number(item.gia) * Number(item.quantity));
         }, 0);
     };
+
 
     if (loading) return (
         <div className="cart-container">
@@ -165,9 +167,12 @@ const Cart = () => {
                                 }).format(calculateTotal())}
                             </span>
                         </div>
-                        <Link to="/checkout" className="checkout-button">
+                        <button
+                            className="checkout-button"
+                            onClick={() => navigate('/checkout')}
+                        >
                             Tiến hành thanh toán
-                        </Link>
+                        </button>
                         <Link to="/" className="continue-shopping">
                             Tiếp tục mua sắm
                         </Link>

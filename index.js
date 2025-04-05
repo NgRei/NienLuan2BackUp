@@ -14,8 +14,8 @@ const { setAdminLocals } = require('./app/middlewares/admin.middleware');
 const categoriesRouter = require('./app/controller/category/category');
 const productApiRoutes = require('./app/controller/product/api controller/product');
 const cartRouter = require('./app/router/cart.router');
+const checkoutRouter = require('./app/router/checkout.router');
 require('dotenv').config();
-
 // Thêm sessionStorage vào app.locals để sử dụng trong toàn bộ ứng dụng
 app.locals.sessionStorage = sessionStorage;
 // Kiểm tra kết nối database khi khởi động
@@ -219,7 +219,10 @@ function configureApp() {
     app.use('/', categoriesRouter);
     app.use('/', productApiRoutes);
     app.use('/api/auth', require('./app/router/auth.router'));
+
     app.use('/api/cart', cartRouter);
+    app.use('/checkout', checkoutRouter);
+
     // Áp dụng middleware xác thực cho tất cả các route bên dưới
     app.use(checkAdmin);
 
@@ -335,5 +338,7 @@ app.use((req, res, next) => {
     console.log('Body:', req.body);
     next();
 });
+
+
 
 module.exports = app;

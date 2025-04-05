@@ -131,6 +131,40 @@ class OrderController {
             res.redirect('/user/order');
         }
     }
+    static async getOrderDetailsApi(req, res) {
+        console.log('=== GET ORDER DETAILS API CALLED ===');
+        console.log('Order ID:', req.params.id);
+        try {
+            const orderId = req.params.id;
+            const order = await OrderModel.getOrderById(orderId);
+            
+            if (!order) {
+                return res.status(404).json({
+                    success: false,
+                    message: 'Không tìm thấy đơn hàng'
+                });
+            }
+            
+            // Lấy chi tiết đơn hàng
+            const orderItems = await OrderModel.getOrderItems(orderId);
+            
+            console.log('Order items retrieved:', orderItems);
+            
+            return res.json({
+                success: true,
+                order: {
+                    ...order,
+                    items: orderItems
+                }
+            });
+        } catch (error) {
+            console.error('Error getting order:', error);
+            return res.status(500).json({
+                success: false,
+                message: 'Lỗi khi lấy thông tin đơn hàng'
+            });
+        }
+    }
 }
 
 module.exports = OrderController;
